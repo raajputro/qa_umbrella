@@ -1,0 +1,85 @@
+# PPAI Test Umbrella Prototype
+
+A basic but working prototype for an AI-assisted QA platform with:
+- requirement ingestion
+- lightweight local RAG
+- scenario and test case generation
+- automation skeleton generation
+- self-healing locator memory
+- step update suggestions from previous experience
+- FastAPI endpoints
+- optional MCP server stub
+
+## What works now
+
+### 1. Requirement to test design
+You can ingest a requirement text or markdown file, index it into a tiny local knowledge base, then generate:
+- scenarios
+- test cases
+- automation candidates
+
+### 2. Lightweight RAG
+This prototype uses a simple local token-overlap retriever so it runs without vector DB setup.
+Later you can replace it with Qdrant, pgvector, or another store.
+
+### 3. Self-healing memory
+The prototype stores successful locator alternatives and step revisions in JSON memory.
+When a locator fails, it can suggest or reuse previous alternatives.
+
+### 4. MCP integration
+A minimal MCP server file is included. If you install the optional `mcp` extra, it exposes tools for:
+- listing requirements
+- reading requirement docs
+- generating scenarios and test cases
+- saving locator fixes
+
+## Quick start
+
+```bash
+python -m venv .venv
+source .venv/bin/activate  # Linux/macOS
+# or .venv\Scripts\activate on Windows
+
+pip install -e .
+cp .env.example .env
+```
+
+### Generate from a sample requirement
+
+```bash
+ppai ingest ppai_test_umbrella/examples/sample_requirement.md
+ppai ask "login validation negative cases"
+ppai generate ppai_test_umbrella/examples/sample_requirement.md
+```
+
+### Start API
+
+```bash
+ppai-api
+```
+
+Then open:
+- `GET /health`
+- `POST /ingest`
+- `POST /generate`
+- `POST /heal/locator`
+- `POST /heal/steps`
+
+### Optional MCP server
+
+```bash
+pip install -e .[mcp]
+python -m ppai_test_umbrella.mcp.server
+```
+
+## Example files generated
+Outputs go under `runtime_data/generated/`.
+
+## Next upgrades
+- real embeddings + vector DB
+- docx/pdf parsers
+- Playwright runtime execution
+- API/microservice contract generation
+- DB validation execution
+- k6 generation and report merge
+- LangGraph orchestration
