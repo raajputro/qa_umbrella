@@ -1,0 +1,135 @@
+from __future__ import annotations
+
+from pathlib import Path
+import re
+from typing import List
+
+from ppai_test_umbrella.shared.models import Requirement, Scenario, TestCase, AutomationCandidate
+from ppai_test_umbrella.shared.io_utils import read_text
+
+
+class RequirementParser:
+    def parse_file(self, path: str | Path) -> list[Requirement]:
+        text = read_text(path)
+        title = Path(path).stem.replace("_", " ").title()
+        blocks = [b.strip() for b in re.split(r"\n\s*\n", text) if b.strip()]
+        requirements: list[Requirement] = []
+        for idx, block in enumerate(blocks, start=1):
+            lines = [line.strip("- ") for line in block.splitlines() if line.strip()]
+            header = lines[0][:80]
+            description = " ".join(lines)
+            actors = self._extract_by_prefix(lines, ("actor:", "actors:"))
+            acceptance = self._extract_by_prefix(lines, ("acceptance:", "acceptance criteria:", "expected:"))
+            business_rules = self._extract_by_prefix(lines, ("rule:", "rules:", "validation:"))
+            requirements.append(Requirement(
+                requirement_id=f"REQ-{idx:03d}",
+                title=header or f"{title} Requirement {idx}",
+                description=description,
+                module=self._guess_module(description),
+                actors=actors,
+                business_rules=business_rules,
+                acceptance_criteria=acceptance,
+                source_path=str(Path(path).resolve()),
+            ))
+        if not requirements:
+            requirements.append(Requirement(
+                requirement_id="REQ-001",
+                title=title,
+                description=text.strip(),
+                module=self._guess_module(text),
+                source_path=str(Path(path).resolve()),
+            ))
+        return requirements
+
+    def _extract_by_prefix(self, lines: list[str], prefixes: tuple[str, ...]) -> list[str]:
+        found = []
+        for line in lines:
+            low = line.lower()
+            for prefix in prefixes:
+                if low.startswith(prefix):
+                    found.append(line.split(":", 1)[1].strip())
+        return found
+
+    def _guess_module(self, text: str) -> str:
+        low = text.lower()
+        if any(k in low for k in ["login", "sign in", "authentication"]):
+            return "authentication"
+        if any(k in low for k in ["member", "customer", "profile"]):
+            return "member_management"
+        if any(k in low for k in ["payment", "transaction", "checkout"]):
+            return "payments"
+        return "general"
+
+
+class ScenarioGenerator:
+    def generate(self, requirements: List[Requirement]) -> list[Scenario]:
+        scenarios: list[Scenario] = []
+        n = 1
+        for req in requirements:
+            base = req.title
+            flavors = [
+                ("positive", f"Validate happy path for {base}", "high", ["smoke", req.module]),
+                ("negative", f"Validate negative and validation rules for {base}", "high", ["negative", req.module]),
+                ("boundary", f"Validate boundary and edge behavior for {base}", "medium", ["boundary", req.module]),
+            ]
+            for scenario_type, title, priority, tags in flavors:
+                scenarios.append(Scenario(
+                    scenario_id=f"SCN-{n:03d}",
+                    requirement_id=req.requirement_id,
+                    title=title,
+                    objective=f"Ensure {base.lower()} behaves correctly under {scenario_type} conditions.",
+                    scenario_type=scenario_type,
+                    priority=priority,
+                    tags=tags,
+                ))
+                n += 1
+        return scenarios
+
+
+class TestCaseGenerator:
+    def generate(self, requirements: List[Requirement], scenarios: List[Scenario]) -> tuple[list[TestCase], list[AutomationCandidate]]:
+        req_map = {r.requirement_id: r for r in requirements}
+        testcases: list[TestCase] = []
+        candidates: list[AutomationCandidate] = []
+        t = 1
+        for scn in scenarios:
+            req = req_map[scn.requirement_id]
+            steps = [
+                f"Open the relevant {req.module} page or entry point.",
+                f"Prepare test data for scenario type: {scn.scenario_type}.",
+                f"Execute the user flow described in requirement {req.requirement_id}.",
+                "Verify UI, API, and data outcomes as applicable.",
+            ]
+            expected = [
+                f"System behavior matches {scn.scenario_type} expectations.",
+                "No unexpected error is shown.",
+            ]
+            automation_type = self._pick_automation_type(req.description)
+            testcase = TestCase(
+                testcase_id=f"TC-{t:03d}",
+                scenario_id=scn.scenario_id,
+                title=scn.title,
+                preconditions=["Test environment is reachable", "Required test data is available"],
+                steps=steps,
+                expected_results=expected,
+                automation_candidate=True,
+                automation_type=automation_type,
+            )
+            testcases.append(testcase)
+            candidates.append(AutomationCandidate(
+                testcase_id=testcase.testcase_id,
+                recommended_framework=automation_type,
+                rationale=f"Recommended from requirement text in module '{req.module}'.",
+            ))
+            t += 1
+        return testcases, candidates
+
+    def _pick_automation_type(self, text: str) -> str:
+        low = text.lower()
+        if any(k in low for k in ["api", "endpoint", "service", "microservice"]):
+            return "pytest_httpx"
+        if any(k in low for k in ["database", "db", "table", "query"]):
+            return "pytest_db"
+        if any(k in low for k in ["load", "performance", "throughput"]):
+            return "k6"
+        return "playwright_pytest"

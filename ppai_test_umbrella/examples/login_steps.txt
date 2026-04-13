@@ -1,0 +1,5 @@
+Open login page
+Enter username
+Enter password
+Click Sign In
+Verify dashboard loads

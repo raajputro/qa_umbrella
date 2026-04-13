@@ -1,0 +1,15 @@
+{
+  "entries": [
+    {
+      "page_name": "LoginPage",
+      "locator_name": "Sign In Button",
+      "successful_selectors": [
+        "#kc-login"
+      ],
+      "notes": [
+        "Known stable id",
+        "Known good selector"
+      ]
+    }
+  ]
+}

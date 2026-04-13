@@ -1,0 +1,8 @@
+Feature: Login
+
+Users should be able to log in using username and password.
+If invalid credentials are entered, an error message should be shown.
+After 5 failed attempts, the account should be locked for 15 minutes.
+Only active users can log in.
+Users with admin role should be redirected to admin dashboard.
+Users with regular role should be redirected to user dashboard.
