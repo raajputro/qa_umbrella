@@ -34,7 +34,15 @@ A minimal MCP server file is included. If you install the optional `mcp` extra, 
 - saving locator fixes
 
 ## Quick start
+## Install Ollama into your system, then execute following command
 
+```bash
+ollama pull qwen2.5-coder:7b
+# Once complete run the following
+ollama run qwen2.5-coder:7b
+```
+
+## Create your venv and install dependencies from 
 ```bash
 python -m venv .venv
 source .venv/bin/activate  # Linux/macOS

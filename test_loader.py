@@ -58,9 +58,18 @@
 from ppai_test_umbrella.modules.requirement_intelligence.loader import load_requirement_text
 from ppai_test_umbrella.modules.requirement_intelligence.requirement_processor import RequirementKnowledgeProcessor
 from ppai_test_umbrella.modules.requirement_intelligence.scenario_generator import OllamaScenarioGenerator
+from ppai_test_umbrella.modules.requirement_intelligence.exporter import (
+    export_test_cases_json,
+    export_test_cases_pdf,
+    export_test_cases_txt,
+)
+from utils.timers import Timer
 
-file_path = "reqs/AmarHishab_Release_1.pdf"
-user_prompt = "count possible test scenarios for feature 6, and write me 10 test cases of that"
+timer = Timer()
+timer.start()
+
+file_path = "reqs/SRS_AH_R1.pdf"
+user_prompt = "count possible test scenarios for feature 7, and write me all test cases of that"
 
 # 1. Load requirement file
 raw_text = load_requirement_text(file_path)
@@ -81,13 +90,31 @@ print(processor.debug_feature_selection(req_index, "6"))
 
 # 4. Send prompt to Ollama
 generator = OllamaScenarioGenerator(
-    model="qwen2.5-coder:latest",   # change if needed
     ollama_url="http://localhost:11434/api/generate",
-    timeout=180,
+    timeout=1200,
     temperature=0.2,
+    batch_size=5,
 )
 
-final_output = generator.generate_from_prompt(result["test_case_generation_prompt"])
+final_output = generator.generate_from_prompt(
+    result["test_case_generation_prompt"],
+    expected_count=result["requested_test_case_count"],
+)
 
 print("----- FINAL OUTPUT -----")
-print(final_output)
+# print(final_output)
+file_name = "test_cases_feature_7_all"
+txt_path = export_test_cases_txt(final_output, f"runtime_data/generated/{file_name}.txt")
+print(f"TXT exported to: {txt_path}")
+
+json_path = export_test_cases_json(final_output, f"runtime_data/generated/{file_name}.json")
+print(f"JSON exported to: {json_path}")
+
+try:
+    pdf_path = export_test_cases_pdf(final_output, f"runtime_data/generated/{file_name}.pdf")
+    print(f"PDF exported to: {pdf_path}")
+except ImportError as exc:
+    print(f"PDF export skipped: {exc}")
+
+time_elapsed = timer.elapsed()
+print(f"Total time elapsed: {time_elapsed}")

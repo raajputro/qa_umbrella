@@ -922,7 +922,7 @@ class RequirementIndex:
 class PromptIntent:
     action: str
     feature_id: Optional[str] = None
-    requested_test_case_count: int = 10
+    requested_test_case_count: Optional[int] = None
 
 
 # =========================================================
@@ -991,17 +991,19 @@ class RequirementKnowledgeProcessor:
 
             possible_count = self.estimate_possible_test_scenarios(feature)
             feature_context = self.get_feature_context(feature)
+            requested_count = intent.requested_test_case_count or possible_count
 
             return {
                 "feature_id": feature.feature_id,
                 "feature_name": feature.feature_name,
                 "possible_test_scenario_count": possible_count,
+                "requested_test_case_count": requested_count,
                 "retrieved_chunk_count": len(feature.chunks),
                 "retrieved_chunks": [c.text for c in feature.chunks],
                 "feature_context": feature_context,
                 "test_case_generation_prompt": self.build_test_case_generation_prompt(
                     feature=feature,
-                    requested_count=intent.requested_test_case_count,
+                    requested_count=requested_count,
                     possible_scenario_count=possible_count,
                 ),
             }
@@ -1022,13 +1024,13 @@ class RequirementKnowledgeProcessor:
         preview = context[:max_preview_chars]
 
         return (
-            f"{'=' * 80}\n"
+            f"{'=' * 180}\n"
             f"FEATURE SELECTED: {feature.feature_id} - {feature.feature_name}\n"
             f"FEATURE WORD COUNT: {self._word_count(feature.raw_text)}\n"
             f"FEATURE CHAR LENGTH: {len(feature.raw_text)}\n"
             f"CHUNK COUNT: {len(feature.chunks)}\n"
             f"CONTEXT PREVIEW:\n{preview}\n"
-            f"{'=' * 80}"
+            f"{'=' * 180}"
         )
 
     # =====================================================
@@ -1383,11 +1385,27 @@ class RequirementKnowledgeProcessor:
 
         feature_id = feature_match.group(1) if feature_match else None
 
-        count_match = re.search(r"\bwrite\s+me\s+(\d+)\s+test\s+cases\b", lower)
-        if not count_match:
-            count_match = re.search(r"\b(\d+)\s+test\s+cases\b", lower)
+        wants_all = bool(
+            re.search(r"\b(all|every|complete|full)\s+(possible\s+)?test\s+cases\b", lower)
+            or re.search(r"\bwrite\s+me\s+all\b", lower)
+            or re.search(r"\bgenerate\s+all\b", lower)
+        )
 
-        requested_count = int(count_match.group(1)) if count_match else 10
+        count_match = re.search(
+            r"\b(?:write|generate|create|give|make|prepare|produce)\s+(?:me\s+)?(\d+)\s+(?:test\s+)?cases\b",
+            lower,
+        )
+        if not count_match:
+            count_match = re.search(r"\b(\d+)\s+(?:test\s+)?cases\b", lower)
+        if not count_match:
+            count_match = re.search(
+                r"\b(?:write|generate|create|give|make|prepare|produce)\s+(?:me\s+)?(\d+)\b",
+                lower,
+            )
+
+        requested_count = None if wants_all else 10
+        if count_match:
+            requested_count = int(count_match.group(1))
 
         return PromptIntent(
             action="feature_test_estimate_and_generate",
@@ -1541,9 +1559,10 @@ Feature Requirement Details:
 Your tasks:
 1. Confirm the exact feature name from the requirement details.
 2. Estimate how many possible test scenarios can be derived from this feature.
-3. Write exactly {requested_count} strong test cases.
+3. Write exactly {requested_count} strong test cases. This count is derived from the estimated possible scenarios when the user asks for all test cases.
 4. Cover positive, negative, validation, boundary, workflow, and error handling where applicable.
-5. Use only this feature's details, not other features.
+5. Do not stop at 10 unless the requested count is 10.
+6. Use only this feature's details, not other features.
 
 Return JSON in this format:
 {{

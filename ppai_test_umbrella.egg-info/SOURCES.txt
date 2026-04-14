@@ -20,7 +20,14 @@ ppai_test_umbrella/mcp/__init__.py
 ppai_test_umbrella/mcp/server.py
 ppai_test_umbrella/modules/__init__.py
 ppai_test_umbrella/modules/prototype_service.py
+ppai_test_umbrella/modules/requirement_intelligence/exporter.py
+ppai_test_umbrella/modules/requirement_intelligence/loader.py
+ppai_test_umbrella/modules/requirement_intelligence/prompt_builder.py
+ppai_test_umbrella/modules/requirement_intelligence/requirement_processor.py
+ppai_test_umbrella/modules/requirement_intelligence/scenario_generator.py
+ppai_test_umbrella/modules/requirement_intelligence/scenario_service.py
 ppai_test_umbrella/shared/__init__.py
 ppai_test_umbrella/shared/io_utils.py
 ppai_test_umbrella/shared/models.py
 ppai_test_umbrella/shared/settings.py
+ppai_test_umbrella/shared/llm/ollama_client.py
