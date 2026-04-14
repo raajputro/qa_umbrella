@@ -4,12 +4,116 @@ Version: 0.1.0
 Summary: Basic working prototype for AI-assisted QA orchestration with RAG, MCP, and self-healing
 Requires-Python: >=3.11
 Description-Content-Type: text/markdown
-Requires-Dist: fastapi>=0.115.0
-Requires-Dist: uvicorn>=0.30.0
-Requires-Dist: pydantic>=2.8.0
-Requires-Dist: python-dotenv>=1.0.1
-Requires-Dist: typer>=0.12.3
-Requires-Dist: pyyaml>=6.0.2
+Requires-Dist: annotated-doc>=0.0.4
+Requires-Dist: annotated-types>=0.7.0
+Requires-Dist: antlr4-python3-runtime>=4.9.3
+Requires-Dist: anyio>=4.13.0
+Requires-Dist: audioop-lts>=0.0.1
+Requires-Dist: audioread>=3.1.0
+Requires-Dist: boltons>=25.0.0
+Requires-Dist: brotlicffi>=1.0.9.2
+Requires-Dist: certifi>=2026.2.25
+Requires-Dist: cffi>=2.0.0
+Requires-Dist: charset-normalizer>=3.4.7
+Requires-Dist: click<8.2,>=8.1
+Requires-Dist: cloudpickle>=3.1.2
+Requires-Dist: colorama>=0.4.6
+Requires-Dist: cryptography>=46.0.7
+Requires-Dist: decorator>=5.2.1
+Requires-Dist: demucs>=4.0.1
+Requires-Dist: distro>=1.9.0
+Requires-Dist: dora-search>=0.1.12
+Requires-Dist: einops>=0.8.1
+Requires-Dist: fastapi>=0.135.3
+Requires-Dist: filelock>=3.20.0
+Requires-Dist: frozendict>=2.4.6
+Requires-Dist: fsspec>=2025.10.0
+Requires-Dist: h11>=0.16.0
+Requires-Dist: httpcore>=1.0.9
+Requires-Dist: httpx>=0.28.1
+Requires-Dist: idna>=3.11
+Requires-Dist: jaraco.classes>=3.4.0
+Requires-Dist: jaraco.functools>=4.1.0
+Requires-Dist: Jinja2>=3.1.6
+Requires-Dist: jiter>=0.14.0
+Requires-Dist: joblib>=1.5.2
+Requires-Dist: jsonpatch>=1.33
+Requires-Dist: jsonpointer>=3.0.0
+Requires-Dist: julius>=0.2.7
+Requires-Dist: keyring>=25.6.0
+Requires-Dist: lameenc>=1.8.1
+Requires-Dist: lazy-loader>=0.4
+Requires-Dist: librosa>=0.11.0
+Requires-Dist: llvmlite>=0.45.1
+Requires-Dist: lxml>=6.0.3
+Requires-Dist: markdown-it-py>=4.0.0
+Requires-Dist: MarkupSafe>=3.0.3
+Requires-Dist: mdurl>=0.1.2
+Requires-Dist: more-itertools>=10.8.0
+Requires-Dist: mpmath>=1.3.0
+Requires-Dist: msgpack>=1.1.2
+Requires-Dist: networkx>=3.6
+Requires-Dist: numba>=0.62.1
+Requires-Dist: numpy>=2.3.5
+Requires-Dist: omegaconf>=2.3.0
+Requires-Dist: openai>=2.31.0
+Requires-Dist: openunmix>=1.3.0
+Requires-Dist: packaging>=25.0
+Requires-Dist: pdfminer.six>=20251230
+Requires-Dist: pdfplumber>=0.11.9
+Requires-Dist: pillow>=12.2.0
+Requires-Dist: pkce>=1.0.3
+Requires-Dist: platformdirs>=4.5.0
+Requires-Dist: pluggy>=1.5.0
+Requires-Dist: pooch>=1.8.2
+Requires-Dist: pycparser>=3.0
+Requires-Dist: pydantic>=2.13.0
+Requires-Dist: pydantic-core>=2.46.0
+Requires-Dist: pydantic-settings>=2.10.1
+Requires-Dist: Pygments>=2.20.0
+Requires-Dist: PyJWT>=2.10.1
+Requires-Dist: pypdf>=6.10.0
+Requires-Dist: PyPDF2>=3.0.1
+Requires-Dist: pypdfium2>=5.7.0
+Requires-Dist: PySocks>=1.7.1
+Requires-Dist: python-docx>=1.2.0
+Requires-Dist: python-dotenv>=1.2.2
+Requires-Dist: pywin32-ctypes>=0.2.2
+Requires-Dist: pyyaml>=6.0.3
+Requires-Dist: readchar>=4.2.1
+Requires-Dist: reportlab>=4.4.10
+Requires-Dist: requests>=2.33.1
+Requires-Dist: retrying>=1.4.2
+Requires-Dist: rich>=14.3.4
+Requires-Dist: ruamel.yaml>=0.18.16
+Requires-Dist: ruamel.yaml.clib>=0.2.14
+Requires-Dist: scikit-learn>=1.7.2
+Requires-Dist: scipy>=1.16.3
+Requires-Dist: semver>=3.0.4
+Requires-Dist: shellingham>=1.5.4
+Requires-Dist: sniffio>=1.3.1
+Requires-Dist: soundfile>=0.13.1
+Requires-Dist: soxr>=1.0.0
+Requires-Dist: standard-aifc>=3.13.0
+Requires-Dist: standard-chunk>=3.13.0
+Requires-Dist: standard-sunau>=3.13.0
+Requires-Dist: starlette>=1.0.0
+Requires-Dist: submitit>=1.5.3
+Requires-Dist: sympy>=1.14.0
+Requires-Dist: threadpoolctl>=3.6.0
+Requires-Dist: tomli>=2.2.1
+Requires-Dist: torch>=2.9.1
+Requires-Dist: torchaudio>=2.9.1
+Requires-Dist: tqdm>=4.67.3
+Requires-Dist: treetable>=0.2.6
+Requires-Dist: truststore>=0.10.1
+Requires-Dist: typer<0.18,>=0.12.3
+Requires-Dist: typing-inspection>=0.4.2
+Requires-Dist: typing_extensions>=4.15.0
+Requires-Dist: urllib3>=2.6.3
+Requires-Dist: uvicorn>=0.44.0
+Requires-Dist: win-inet-pton>=1.1.0
+Requires-Dist: zstandard>=0.24.0
 Provides-Extra: mcp
 Requires-Dist: mcp>=1.0.0; extra == "mcp"
 Provides-Extra: playwright
@@ -52,7 +156,15 @@ A minimal MCP server file is included. If you install the optional `mcp` extra, 
 - saving locator fixes
 
 ## Quick start
+## Install Ollama into your system, then execute following command
 
+```bash
+ollama pull qwen2.5-coder:7b
+# Once complete run the following
+ollama run qwen2.5-coder:7b
+```
+
+## Create your venv and install dependencies from 
 ```bash
 python -m venv .venv
 source .venv/bin/activate  # Linux/macOS

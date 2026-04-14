@@ -1,4 +1,9 @@
 .venv
+.venv*/
+myvenv
+.myvenv
 *.pdf
+*.json
+*.txt
 .env
 __pycache__/

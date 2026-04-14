@@ -1,0 +1,40 @@
+[project]
+name = "ppai-test-umbrella"
+version = "0.1.0"
+description = "Basic working prototype for AI-assisted QA orchestration with RAG, MCP, and self-healing"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+  "fastapi>=0.115.0",
+  "uvicorn>=0.30.0",
+  "pydantic>=2.8.0",
+  "python-dotenv>=1.0.1",
+  "typer>=0.12.3",
+  "pyyaml>=6.0.2",
+]
+
+[project.optional-dependencies]
+mcp = [
+  "mcp>=1.0.0",
+]
+playwright = [
+  "playwright>=1.52.0",
+  "pytest>=8.0.0",
+]
+
+[project.scripts]
+ppai = "ppai_test_umbrella.apps.cli:app"
+ppai-api = "ppai_test_umbrella.apps.api:run"
+
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+include-package-data = true
+
+[tool.setuptools.packages.find]
+include = ["ppai_test_umbrella*"]
+exclude = ["runtime_data*"]
+
+[tool.setuptools.dynamic]
