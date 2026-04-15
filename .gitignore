@@ -1,9 +1,15 @@
+# all venv
 .venv
 .venv*/
 myvenv
 .myvenv
+mvenv
+venv
+venv*/
+# all files with these extensions
 *.pdf
 *.json
 *.txt
 .env
+# junk folders
 __pycache__/
