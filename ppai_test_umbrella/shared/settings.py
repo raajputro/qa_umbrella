@@ -20,7 +20,7 @@ class Settings:
 
     @property
     def requirements_dir(self) -> Path:
-        return Path(os.getenv("PPAI_REQUIREMENTS_DIR", str(self.base_dir / "requirements")))
+        return Path(os.getenv("PPAI_REQUIREMENTS_DIR",  "./reqs"))
 
     @property
     def knowledge_dir(self) -> Path:

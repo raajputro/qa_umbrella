@@ -15,6 +15,7 @@ ppai_test_umbrella/agents/test_design_agent.py
 ppai_test_umbrella/apps/__init__.py
 ppai_test_umbrella/apps/api.py
 ppai_test_umbrella/apps/cli.py
+ppai_test_umbrella/apps/cli_runner.py
 ppai_test_umbrella/apps/mcp_chat_agent.py
 ppai_test_umbrella/apps/mcp_client_cli.py
 ppai_test_umbrella/examples/self_healing_playwright_helper.py
@@ -31,6 +32,7 @@ ppai_test_umbrella/mcp/tools/healing.py
 ppai_test_umbrella/mcp/tools/reports.py
 ppai_test_umbrella/mcp/tools/requirements.py
 ppai_test_umbrella/modules/__init__.py
+ppai_test_umbrella/modules/execution_service.py
 ppai_test_umbrella/modules/prototype_service.py
 ppai_test_umbrella/modules/requirement_intelligence/exporter.py
 ppai_test_umbrella/modules/requirement_intelligence/loader.py

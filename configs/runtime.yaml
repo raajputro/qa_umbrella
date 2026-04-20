@@ -1,0 +1,23 @@
+app:
+  base_url: "https://env73.erp.bracits.net/"
+  headless: false
+
+auth:
+  username: "132382"
+  password: "abc123$"
+  wrong_password: "abc123$."
+
+selectors:
+  login_username: "#username"
+  login_password: "#password"
+  login_submit: "#kc-login"
+  login_error: ".error, .alert, .invalid-feedback"
+
+assertions:
+  login_error_text: "invalid"
+  login_success_url_contains: "myDashboard"
+  base_url_path_hint: "/"
+
+# api:
+#   base_url: "https://your-api-url.com"
+#   headers: {}

@@ -1,3 +1,4 @@
 [console_scripts]
 ppai = ppai_test_umbrella.apps.cli:app
 ppai-api = ppai_test_umbrella.apps.api:run
+ppai-run = ppai_test_umbrella.apps.cli_runner:app
