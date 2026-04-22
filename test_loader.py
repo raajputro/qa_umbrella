@@ -70,8 +70,8 @@ import re
 
 GENERATION_SCOPE = "all"  # use "feature" for one feature, or "all" for full SRS
 FEATURE_ID = "7"  # used only when GENERATION_SCOPE = "feature"
-USER_PROMPT = None
-FILE_PATH = "reqs/SRS_AH_R1.pdf"
+USER_PROMPT = "count possible test scenarios for all features, and write me all test cases for each feature"  # optional natural-language prompt to override scope and requested test case count
+FILE_PATH = "reqs/Section_I2.docx"
 # Examples:
 # USER_PROMPT = "count possible test scenarios for feature 7, and write me all test cases of that"
 # USER_PROMPT = "count possible test scenarios for all features, and write me all test cases for each feature"
