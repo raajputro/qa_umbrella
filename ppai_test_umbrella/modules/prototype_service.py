@@ -137,7 +137,7 @@ class PrototypeService:
         self,
         path: str | Path,
         feature_id: str,
-        count: int = 10,
+        count: int | None = None,
     ) -> dict[str, Any]:
         requirements = self.parser.parse_file(path)
         feature_index = int(feature_id) - 1
@@ -149,7 +149,7 @@ class PrototypeService:
         scenarios = self.scenario_gen.generate([req])
         testcases, candidates = self.testcase_gen.generate([req], scenarios)
 
-        limited_cases = testcases[: max(1, count)]
+        limited_cases = testcases if count is None else testcases[: max(1, count)]
         limited_candidates = [
             c for c in candidates if c.testcase_id in {tc.testcase_id for tc in limited_cases}
         ]

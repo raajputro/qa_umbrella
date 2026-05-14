@@ -1403,7 +1403,7 @@ class RequirementKnowledgeProcessor:
                 lower,
             )
 
-        requested_count = None if wants_all else 10
+        requested_count = None
         if count_match:
             requested_count = int(count_match.group(1))
 
