@@ -165,7 +165,7 @@ class QAUmbrellaMCPClient:
         self,
         requirement_path: str,
         feature_id: str,
-        count: int = 10,
+        count: int | None = None,
     ) -> dict[str, Any]:
         """
         End-to-end helper:
@@ -183,13 +183,16 @@ class QAUmbrellaMCPClient:
             {"path": requirement_path, "feature_id": str(feature_id)},
         )
 
+        testcase_args: dict[str, Any] = {
+            "path": requirement_path,
+            "feature_id": str(feature_id),
+        }
+        if count is not None:
+            testcase_args["count"] = int(count)
+
         testcases = await self.call_tool(
             "generate_test_cases_for_feature",
-            {
-                "path": requirement_path,
-                "feature_id": str(feature_id),
-                "count": int(count),
-            },
+            testcase_args,
         )
 
         return {

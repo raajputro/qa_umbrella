@@ -331,7 +331,7 @@ else:
     def generate_test_cases_for_feature(
         path: str,
         feature_id: str,
-        count: int = 10,
+        count: int | None = None,
     ) -> dict:
         return service.generate_test_cases_for_feature(path, feature_id, count)
 

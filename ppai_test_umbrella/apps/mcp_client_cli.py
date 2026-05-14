@@ -117,8 +117,8 @@ def build_parser() -> argparse.ArgumentParser:
     feature_design.add_argument(
         "--count",
         type=int,
-        default=10,
-        help="Number of test cases to generate",
+        default=None,
+        help="Optional number of test cases to generate. Omit to generate all.",
     )
 
     return parser

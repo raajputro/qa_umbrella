@@ -183,7 +183,7 @@ executor = ExecutionService()
 def run(
     file: str = typer.Argument(..., help="Path to requirement file"),
     feature: str = typer.Option(..., "--feature", "-f", help="Feature ID"),
-    count: int = typer.Option(10, "--count", "-c", help="Number of testcases"),
+    count: int | None = typer.Option(None, "--count", "-c", help="Optional number of testcases. Omit to generate all."),
     execute: bool = typer.Option(False, "--execute", "-e", help="Execute after generation"),
     mode: str = typer.Option("dry_run", "--mode", "-m", help="dry_run/live"),
     config: str = typer.Option("", "--config", help="Path to YAML runtime config"),

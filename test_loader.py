@@ -70,8 +70,13 @@ import re
 
 GENERATION_SCOPE = "all"  # use "feature" for one feature, or "all" for full SRS
 FEATURE_ID = "7"  # used only when GENERATION_SCOPE = "feature"
-USER_PROMPT = "count possible test scenarios for all features, and write me all test cases for each feature"  # optional natural-language prompt to override scope and requested test case count
-FILE_PATH = "reqs/Section_I2.docx"
+# USER_PROMPT = "count possible test scenarios for all features, and write me all test cases for each feature"  # optional natural-language prompt to override scope and requested test case count
+USER_PROMPT = """Act as a SQA engineer. Count possible test scenarios for feature 1 from the provided user story, user journey, actors, scope, pre-conditions, assumptions, impacted areas, requirements, acceptance criteria and execptions write testcases and expected results. Follow exactly the structure :
+* Write positive, negative, and boundary cases
+* Start sentences with a mixture of Verify that / Ensure that / Check that / Validate that / other variations
+* Write expected results for the testcases only. Write sentence using “should” statements"""
+
+FILE_PATH = "reqs/Section_IV.docx"
 # Examples:
 # USER_PROMPT = "count possible test scenarios for feature 7, and write me all test cases of that"
 # USER_PROMPT = "count possible test scenarios for all features, and write me all test cases for each feature"
