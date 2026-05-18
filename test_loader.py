@@ -71,11 +71,26 @@ import re
 GENERATION_SCOPE = "all"  # use "feature" for one feature, or "all" for full SRS
 FEATURE_ID = "7"  # used only when GENERATION_SCOPE = "feature"
 # USER_PROMPT = "count possible test scenarios for all features, and write me all test cases for each feature"  # optional natural-language prompt to override scope and requested test case count
-USER_PROMPT = """Act as a SQA engineer. Count possible test scenarios for feature 1 from the provided user story, user journey, actors, scope, pre-conditions, assumptions, impacted areas, requirements, acceptance criteria and execptions write testcases and expected results. Follow exactly the structure :
-* Write positive, negative, and boundary cases
-* Start sentences with a mixture of Verify that / Ensure that / Check that / Validate that / other variations
-* Write expected results for the testcases only. Write sentence using “should” statements"""
+USER_PROMPT = """Act as an SQA Engineer. From the provided SRS, generate test cases.
 
+Output format:
+1. Test Case Title
+2. Steps
+3. Expected Results
+
+Rules:
+- Do not add descriptions or extra text
+- Include positive, negative, and boundary test cases
+- Start Test Case Titles with mixed variations like:
+  Verify that, Ensure that, Check that, Validate that, Confirm that
+- Steps must be clear and sequential
+- Expected Results must:
+  - use "should" statements
+  - contain only expected outcomes
+  - be concise (preferably under 70 characters)
+- Generate test cases strictly from the SRS
+"""
+#USER_PROMPT = "Act as a SQA engineer. From the provided user journery, breakdown, requirements, acceptance criteria write testcases and expected results. Follow exactly the structure : Write positive, negative, and boundary cases, Start sentences with a mixture of Verify that / Ensure that / Check that / Validate that / other variations, Write expected results for the testcases only. Write sentence using “should” statements"
 FILE_PATH = "reqs/Section_IV.docx"
 # Examples:
 # USER_PROMPT = "count possible test scenarios for feature 7, and write me all test cases of that"
@@ -223,9 +238,9 @@ raw_text = load_requirement_text(file_path)
 
 # 2. Build feature-aware index
 processor = RequirementKnowledgeProcessor(
-    chunk_size=1200,
-    chunk_overlap=150,
-    min_feature_word_count=40,
+    chunk_size=2400,
+    chunk_overlap=300,
+    min_feature_word_count=50,
 )
 req_index = processor.build_index(raw_text, title="Sample SRS")
 features_to_generate, selected_scope = _select_features_for_request(
@@ -240,12 +255,13 @@ features_to_generate, selected_scope = _select_features_for_request(
 generator = OllamaScenarioGenerator(
     ollama_url="http://localhost:11434/api/generate",
     timeout=1200,
-    temperature=0.2,
-    batch_size=5,
+    temperature=0.3,
+    batch_size=25,
 )
 
 all_feature_outputs = []
 generation_errors = []
+
 
 print(
     f"Detected {len(req_index.features)} candidate feature section(s); "
@@ -253,7 +269,7 @@ print(
     f"in {selected_scope} mode."
 )
 
-for feature in features_to_generate:
+for idx, feature in enumerate(features_to_generate, start=1):
     print(f"Generating feature {feature.feature_id}: {feature.feature_name}")
     result = _build_generation_request(processor, feature, prompt=args.prompt)
 
@@ -276,7 +292,8 @@ for feature in features_to_generate:
     all_feature_outputs.append(final_output)
 
     file_name = (
-        f"test_cases_feature_{_safe_file_part(feature.feature_id)}_"
+        f"timelog_{idx:02d}_"
+        f"{_safe_file_part(feature.feature_id)}_"
         f"{_safe_file_part(feature.feature_name)}"
     )
     txt_path = export_test_cases_txt(final_output, f"runtime_data/generated/{file_name}.txt")

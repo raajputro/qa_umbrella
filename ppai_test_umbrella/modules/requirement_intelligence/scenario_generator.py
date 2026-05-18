@@ -37,7 +37,7 @@ class OllamaScenarioGenerator:
         timeout: Optional[int] = None,
         temperature: float = 0.2,
         num_predict: Optional[int] = None,
-        batch_size: int = 10,
+        batch_size: int = 15,
         force_json: bool = True,
     ):
         self.model = model or os.getenv("PPAI_LLM_MODEL", "qwen2.5-coder:7b")
