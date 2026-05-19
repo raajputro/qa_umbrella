@@ -91,7 +91,7 @@ Rules:
 - Generate test cases strictly from the SRS
 """
 #USER_PROMPT = "Act as a SQA engineer. From the provided user journery, breakdown, requirements, acceptance criteria write testcases and expected results. Follow exactly the structure : Write positive, negative, and boundary cases, Start sentences with a mixture of Verify that / Ensure that / Check that / Validate that / other variations, Write expected results for the testcases only. Write sentence using “should” statements"
-FILE_PATH = "reqs/Section_IV.docx"
+FILE_PATH = "reqs/Section_IV.txt"
 # Examples:
 # USER_PROMPT = "count possible test scenarios for feature 7, and write me all test cases of that"
 # USER_PROMPT = "count possible test scenarios for all features, and write me all test cases for each feature"
@@ -256,7 +256,7 @@ generator = OllamaScenarioGenerator(
     ollama_url="http://localhost:11434/api/generate",
     timeout=1200,
     temperature=0.3,
-    batch_size=25,
+    batch_size=15,
 )
 
 all_feature_outputs = []
