@@ -1,0 +1,746 @@
+{
+  "generated_titles": [
+    "Verify that a valid time log entry can be created and saved.",
+    "Ensure that the system prevents saving a time log entry with missing hours.",
+    "Check that the system validates hours to be a numeric value greater than zero.",
+    "Validate that the system correctly handles selecting a date beyond the current month.",
+    "Confirm that the system displays the correct project list based on user allocation.",
+    "Verify that the system displays the correct project list based on user allocation",
+    "Ensure that a valid time log entry can be created and saved",
+    "Validate that the system correctly handles selecting a date beyond the current month",
+    "Ensure that the system prevents saving a time log entry with missing hours",
+    "Check that the system validates hours to be a numeric value greater than zero",
+    "Verify that a time log entry can be created with valid data",
+    "Ensure that the system prevents saving a time log entry with a zero hours value",
+    "Check that the system displays the correct project list based on user allocation",
+    "Verify that the system allows saving a time log entry with valid inputs and a description",
+    "Verify that a user can successfully log time with valid inputs",
+    "Verify that a time log entry can be created with valid data and a description",
+    "Verify that a user can successfully log time with valid inputs for a single project and a description.",
+    "Ensure that the system prevents saving a time log entry with a zero hours value.",
+    "Check that the system displays the correct project list based on user allocation and project status.",
+    "Verify that the system prevents saving a time log entry with missing hours and description fields.",
+    "Verify that the system displays the correct project list based on user allocation and project status.",
+    "Ensure that a user can successfully log time with valid inputs for a single project and a description.",
+    "Validate that the system prevents saving a time log entry with missing hours.",
+    "Verify that a user can successfully log time with valid inputs and a description.",
+    "Verify that the system displays the correct project list based on user allocation and project status",
+    "Ensure that a user can successfully log time with valid inputs and a description",
+    "Ensure that a user can successfully log time with valid inputs for a single project and a description",
+    "Verify that user can create a time log entry with valid data",
+    "Ensure that the system prevents submission with missing required fields",
+    "Check that the hours field accepts numeric values only",
+    "Validate that hours field accepts values greater than zero",
+    "Verify that the system allows selection of dates within the current month",
+    "Check that the system rejects selection of dates beyond the current month",
+    "Validate that the work description field accepts a maximum character limit",
+    "Verify that the system correctly displays the total hours for the entry",
+    "Ensure that the system saves the entry as a draft when the user clicks the 'Save' button",
+    "Check that the system displays an error message if the project is archived",
+    "Verify that the system correctly handles zero hours entry",
+    "Ensure that the system prevents saving with invalid project selection",
+    "Validate that the system allows saving with a description containing special characters",
+    "Verify that the system correctly handles empty description field",
+    "Check that the system correctly displays the entry details after saving",
+    "Validate that the system allows saving with a description containing multiple lines",
+    "Ensure that the system correctly saves the entry when the user navigates away and returns",
+    "Verify that the system correctly handles the case when the user clears all the fields and saves",
+    "Check that the system correctly displays the entry details after saving with a description containing special characters",
+    "Validate that the system correctly handles the case when the user clears the description field and saves",
+    "Verify that the system prevents submission with missing required fields",
+    "Check that hours field accepts numeric values greater than zero",
+    "Validate that the system rejects non-numeric values in the hours field",
+    "Verify that the work description field is mandatory",
+    "Check that the date selection is restricted to the current month",
+    "Verify that the system handles invalid project selections correctly",
+    "Ensure that the system saves draft entries correctly",
+    "Verify that the system displays the correct data on the Timesheet Entry Page",
+    "Check that the system allows submitting completed entries",
+    "Validate that the system handles archived projects correctly",
+    "Verify that the UI is responsive across different screen sizes",
+    "Ensure that the system displays appropriate messages for successful submission",
+    "Check that the system handles zero hours correctly",
+    "Validate that the system prevents duplicate entries",
+    "Verify that the system correctly displays the current date and time",
+    "Check that the system handles empty work descriptions correctly",
+    "Validate that the system correctly saves the entry when all fields are valid",
+    "Ensure that the system displays the correct error message for invalid hour values",
+    "Verify that the system correctly handles the submission of multiple entries",
+    "Verify that a valid time log entry can be created with correct data",
+    "Ensure that the system prevents creation of a time log entry with zero hours",
+    "Check that the system limits date selection to the current month",
+    "Validate that the system correctly displays project names from Brac and BracIT Jira",
+    "Assert that the system displays an error if the selected project is archived",
+    "Check that the system displays an error if the selected project is archived",
+    "Validate that the system limits date selection to the current month",
+    "Confirm that the system correctly displays project names from Brac and BracIT Jira",
+    "Verify that the system displays an error message when a user attempts to create a time log entry with a zero hour value",
+    "Check that the system prevents the creation of a time log entry with a project that is archived",
+    "Validate that the system correctly limits date selection to the current month",
+    "Ensure that the system displays the correct project names from Brac and BracIT Jira",
+    "Verify that the system allows users to save a draft time log entry with valid inputs",
+    "Ensure that the system correctly displays project names from Brac and BracIT Jira",
+    "Check that the system prevents creation of a time log entry with an empty description",
+    "Ensure that the system validates the hours field against a reasonable range (e.g., 0-40)",
+    "Verify that the system handles invalid date formats correctly",
+    "Check that the system prevents saving a draft with missing required fields",
+    "Verify that the system correctly saves a draft with valid data",
+    "Ensure that the system handles large number of hours correctly",
+    "Verify that the system allows saving a draft with special characters in the description field",
+    "Check that the system handles empty project selection correctly",
+    "Verify that the system allows saving a draft with a valid date",
+    "Ensure that the system prevents saving a draft with a negative number of hours",
+    "Verify that the system correctly saves a draft with a valid date and hours",
+    "Check that the system handles the case when the date is in the future",
+    "Verify that the system allows saving a draft with a valid date and description",
+    "Ensure that the system correctly saves a draft with a valid date, hours, and description",
+    "Verify that the system correctly saves a draft with a valid date, hours, and description, and special characters in the description field",
+    "Verify that the system prevents submission with missing date",
+    "Ensure that hours field accepts numeric values greater than zero",
+    "Validate that the system handles zero hours correctly",
+    "Verify that the system prevents duplicate entries",
+    "Check that the system displays the correct error message for invalid hour values",
+    "Ensure that the system displays the correct error message for invalid date format",
+    "Verify that the system prevents submission with empty work description",
+    "Verify that the user can successfully log time with valid inputs.",
+    "Verify that invalid or missing inputs block submission.",
+    "Check that hours must be numeric and greater than zero.",
+    "Validate that the system allows submitting completed entries.",
+    "Verify that the system does not allow logging without allocation.",
+    "Check that the list of work log categories is static and taken from portfolio manager.",
+    "Validate that project will be searchable from both Brac and BracIT jira and shown list must be assigned to the user.",
+    "Verify that the system does not allow selecting archived projects.",
+    "Check that the date selection allows only previous dates up to the current month.",
+    "Validate that the work description field is available.",
+    "Verify that the system displays an error message if the hours field is empty.",
+    "Check that the system allows saving a draft entry with valid data.",
+    "Validate that the system correctly displays the date selected.",
+    "Verify that a user can successfully log a valid time entry.",
+    "Verify that the system prevents the creation of a time entry with missing mandatory fields.",
+    "Verify that the system prevents the creation of a time entry with invalid hours (non-numeric).",
+    "Verify that the system allows selecting a date in the past (within the current month).",
+    "Verify that the system prevents selecting a date beyond the current month.",
+    "Verify that the system allows submitting completed entries.",
+    "Verify that the system prevents logging time without an active project allocation.",
+    "Verify that the system correctly displays the list of available projects from Brac/BracIT Jira.",
+    "Verify that the system handles archived projects correctly.",
+    "Verify that the Work Description field is available.",
+    "Verify that the system handles empty Work Description field.",
+    "Verify that the system allows creating a time entry with a large number of hours.",
+    "Verify that the system handles invalid input for hours (e.g., text).",
+    "Verify that the system correctly handles the submission of a time entry.",
+    "Verify that the system handles zero hours correctly.",
+    "Verify that the system correctly handles date selection.",
+    "Verify that the system correctly handles zero hours.",
+    "Verify that the system correctly saves the time log entry.",
+    "Verify that the system handles edge case of maximum allowed hours.",
+    "Verify that the system handles invalid date formats.",
+    "Verify that the system handles the case where no project is selected.",
+    "Verify that the system allows entering a maximum number of hours (e.g., 8).",
+    "Verify that the system correctly saves the time entry with all required fields filled.",
+    "Verify that the system correctly saves the time entry with a minimum number of hours.",
+    "Verify that the system correctly saves the time entry with a valid hours value.",
+    "Verify that a user can successfully create a daily time log entry with valid inputs.",
+    "Verify that a user cannot submit an empty work description.",
+    "Verify that a user cannot enter non-numeric values in the hours field.",
+    "Verify that a user cannot select an archived project.",
+    "Verify that a user cannot select a date beyond the current month.",
+    "Verify that a user can submit a completed entry.",
+    "Verify that a user can save an entry as Draft.",
+    "Verify that a user can edit and update an existing time log entry.",
+    "Verify that a user cannot submit an entry with missing inputs.",
+    "Verify that a user cannot select an invalid work log category.",
+    "Verify that a user can search for time log entries by project.",
+    "Verify that a user cannot delete an entry if they do not have permission.",
+    "Verify that a user can view details of an existing time log entry.",
+    "Validate that a user can submit an entry with the minimum allowed hours.",
+    "Verify that a user can select the default work log category.",
+    "Ensure that a user cannot submit an entry without selecting any project.",
+    "Verify that a user can submit an entry with a date in the current month.",
+    "Verify that a user can submit an entry with a valid project from Brac.",
+    "Verify that a user cannot submit an entry with missing inputs",
+    "Verify that a user can save an entry as draft",
+    "Verify that a user can edit an existing draft entry",
+    "Verify that a user can successfully log time with valid inputs.",
+    "Verify that invalid inputs block submission.",
+    "Verify that the system prevents logging without allocation.",
+    "Verify that the system allows selecting a date within the current month.",
+    "Verify that hours must be a numeric value greater than zero.",
+    "Verify that the system displays appropriate error messages.",
+    "Verify that the system allows saving as Draft.",
+    "Verify that the system correctly handles empty date selection.",
+    "Verify that the system correctly handles empty Work Description.",
+    "Verify that the system correctly handles large hour values.",
+    "Ensure that the system prevents logging on weekends.",
+    "Validate that the system prevents logging beyond the current month.",
+    "Confirm that the system allows selecting a date from previous months.",
+    "Assert that the system handles empty Work Log Category selection.",
+    "Validate that the system handles non-numeric hour inputs.",
+    "Verify that the system handles role-based access for non-project members.",
+    "Verify that the system handles role-based access for project leads/managers.",
+    "Verify that the system handles role-based access for team leads.",
+    "Verify that the system handles edge case of logging on a specific date (e.g., first day of the month).",
+    "Ensure that the system prevents logging on holidays.",
+    "Ensure that the system prevents logging on non-working days.",
+    "Ensure that the system prevents logging on non-business days.",
+    "Ensure that invalid or missing inputs block submission.",
+    "Validate that Hours must be numeric and greater than zero.",
+    "Confirm that the system allows submitting completed entries.",
+    "Validate that the list of Work Log Categories is static and taken from the portfolio manager.",
+    "Confirm that Project is searchable from both Brac and BracIT Jira and shown list is assigned to the user.",
+    "Verify that the date selection allows only dates from the current month.",
+    "Assert that data fields validation prevents invalid data entry.",
+    "Validate that the system handles archived projects correctly.",
+    "Verify that the system allows entry with zero hours.",
+    "Confirm that the system correctly handles empty Work Descriptions.",
+    "Validate that the system handles large numeric values for Hours correctly.",
+    "Verify that the system correctly handles special characters in the Work Description.",
+    "Confirm that the system allows saving the entry with valid data.",
+    "Verify that the entry is saved successfully.",
+    "Test with maximum allowed value for Hours.",
+    "Test with minimum allowed value for Hours.",
+    "Test with empty Work Description.",
+    "Test with special characters in Work Description.",
+    "Test with a very long Work Description.",
+    "Test with a valid date in the past.",
+    "Test with a date in the future.",
+    "Test with no project selected.",
+    "Test with a project that does not exist.",
+    "Test with a project that has no users assigned to it.",
+    "Test with a valid date in the past and a project selected.",
+    "Test with a date in the future and a project selected.",
+    "Test with a valid date and a project selected and a long Work Description.",
+    "Negative Test - Invalid Project Selection",
+    "Boundary Test - Hours at Minimum Value",
+    "Boundary Test - Hours at Maximum Value",
+    "Negative Test - Empty Description with Valid Hours",
+    "Positive Test - Valid Data Entry",
+    "Negative Test - Invalid Data Entry - Non-Numeric Hours",
+    "Positive Test - Saving with Existing Data",
+    "Negative Test - Attempting to Save with Empty Fields",
+    "Positive Test - Saving with Valid Data and Date",
+    "Negative Test - Attempting to Save with Invalid Date",
+    "Validate that the list of Work log category is static and taken from portfolio manager.",
+    "Confirm that project is searchable from both Brac and BracIT jira and shown list must be assigned to the user.",
+    "Verify that the system allows selecting a date beyond the current month.",
+    "Ensure that the hours field is numeric and greater than zero.",
+    "Confirm that the system allows submitting completed entries with zero hours.",
+    "Verify that the system handles invalid date formats correctly.",
+    "Confirm that the system correctly handles large numeric values for hours.",
+    "Validate that the system correctly handles empty work descriptions.",
+    "Negative Test - Invalid Date Format (MM/DD/YYYY)",
+    "Boundary Test - Hours = 0",
+    "Negative Test - Date in the Future",
+    "Negative Test - Missing Required Fields",
+    "Positive Test - Saving a Completed Entry",
+    "Negative Test - Invalid Date Format (DD/MM/YYYY)",
+    "Negative Test - Hours Greater Than 24",
+    "Positive Test - Saving a New Entry",
+    "Verify that the system allows users to create daily time log entries with valid inputs.",
+    "Role-Based Access - Manager Cannot Edit",
+    "Boundary Test - Hours = 24",
+    "Negative Test - Date in the Past",
+    "Positive Test - Saving with Special Characters",
+    "Ensure that invalid Date Format (MM/DD/YYYY) is blocked.",
+    "Negative Test - Date Format - Invalid Characters",
+    "Positive Test - Saving with Valid Data",
+    "Negative Test - Hours Value Exceeds Limit",
+    "Negative Test - Date Field is Empty",
+    "Negative Test - Work Description Field is Empty",
+    "Negative Test - Hours Value is Empty",
+    "Ensure that invalid or missing inputs block submission",
+    "Validate that the date picker is required and must be a valid date",
+    "Validate that work description field must be available",
+    "Ensure that projects dropdown is required and must select one project from the list",
+    "Ensure that archived projects cannot be selectable",
+    "Ensure that hours must be numeric and greater than zero",
+    "Validate that the date picker is required and must not select a future date",
+    "Ensure that the system allows users to select any previous date but not beyond the current month.",
+    "Ensure that the system blocks submission if any required field is missing.",
+    "Verify that invalid or missing inputs block submission",
+    "Verify that hours must be numeric and greater than zero",
+    "Verify that project is searchable from both Brac and BracIT jira and shown list must be assigned to the user",
+    "Verify that the system allows submitting completed entries",
+    "Verify that without allocation, the system will not allow to log time",
+    "Verify that if a project is archived, it must not be selectable",
+    "Validate that the system blocks submission if any required field is missing.",
+    "Ensure that the system blocks submission if hours are not numeric or greater than zero.",
+    "Verify that the system allows selecting any previous date but not beyond the current month",
+    "Verify that the system allows submitting completed entries as Drafts",
+    "Verify that archived projects are not selectable",
+    "Ensure that the system displays an error message when a user tries to log time with a future date",
+    "Validate that the system allows selecting projects from both Brac and BracIT Jira",
+    "Ensure that the system displays an error message when a user tries to log time without selecting a project",
+    "Validate that the system displays an error message when a user tries to log time with a work description less than 10 characters",
+    "Validate that hours must be numeric and greater than zero",
+    "Validate that projects dropdown is required and must select one project from the list",
+    "Validate that category dropdown is required and must select one category from the list",
+    "Validate that work description field is required and must have at least 10 characters",
+    "Validate that archived projects cannot be selected"
+  ],
+  "feature_dependencies": {},
+  "domain_glossary": [],
+  "lessons_learned": [],
+  "run_summaries": [
+    {
+      "timestamp": "2026-05-28T17:59:44.081111",
+      "feature_id": "1",
+      "feature_name": "Create Daily Time Log Entry",
+      "test_case_count": 20,
+      "type_breakdown": {
+        "positive": 13,
+        "negative": 4,
+        "boundary": 3
+      }
+    },
+    {
+      "timestamp": "2026-05-28T18:26:48.324379",
+      "feature_id": "1",
+      "feature_name": "Create Daily Time Log Entry",
+      "test_case_count": 19,
+      "type_breakdown": {
+        "negative": 8,
+        "boundary": 3,
+        "positive": 8
+      }
+    },
+    {
+      "timestamp": "2026-05-28T18:51:55.567277",
+      "feature_id": "1",
+      "feature_name": "Create Daily Time Log Entry",
+      "test_case_count": 30,
+      "type_breakdown": {
+        "positive": 14,
+        "negative": 13,
+        "boundary": 3
+      }
+    },
+    {
+      "timestamp": "2026-05-28T19:37:48.715730",
+      "feature_id": "1",
+      "feature_name": "Create Daily Time Log Entry",
+      "test_case_count": 26,
+      "type_breakdown": {
+        "negative": 13,
+        "boundary": 4,
+        "positive": 9
+      }
+    },
+    {
+      "timestamp": "2026-05-28T22:16:38.995590",
+      "feature_id": "1",
+      "feature_name": "Create Daily Time Log Entry",
+      "test_case_count": 20,
+      "type_breakdown": {
+        "negative": 9,
+        "boundary": 3,
+        "positive": 8
+      }
+    },
+    {
+      "timestamp": "2026-05-28T22:32:29.432467",
+      "feature_id": "1",
+      "feature_name": "Create Daily Time Log Entry",
+      "test_case_count": 13,
+      "type_breakdown": {
+        "positive": 7,
+        "negative": 4,
+        "boundary": 2
+      }
+    },
+    {
+      "timestamp": "2026-05-28T23:22:59.506036",
+      "feature_id": "1",
+      "feature_name": "Create Daily Time Log Entry",
+      "test_case_count": 13,
+      "type_breakdown": {
+        "positive": 7,
+        "negative": 4,
+        "boundary": 2
+      }
+    },
+    {
+      "timestamp": "2026-05-29T00:11:04.359173",
+      "feature_id": "1",
+      "feature_name": "Create Daily Time Log Entry",
+      "test_case_count": 13,
+      "type_breakdown": {
+        "positive": 7,
+        "negative": 4,
+        "boundary": 2
+      }
+    },
+    {
+      "timestamp": "2026-05-29T13:45:22.932363",
+      "feature_id": "1",
+      "feature_name": "Create Daily Time Log Entry",
+      "test_case_count": 13,
+      "type_breakdown": {
+        "positive": 7,
+        "negative": 4,
+        "boundary": 2
+      }
+    },
+    {
+      "timestamp": "2026-05-29T16:38:44.888583",
+      "feature_id": "1",
+      "feature_name": "Create Daily Time Log Entry",
+      "test_case_count": 14,
+      "type_breakdown": {
+        "positive": 5,
+        "negative": 7,
+        "boundary": 2
+      }
+    },
+    {
+      "timestamp": "2026-05-29T18:03:51.641331",
+      "feature_id": "1",
+      "feature_name": "Create Daily Time Log Entry",
+      "test_case_count": 16,
+      "type_breakdown": {
+        "positive": 6,
+        "negative": 7,
+        "boundary": 3
+      }
+    },
+    {
+      "timestamp": "2026-05-29T18:22:53.672201",
+      "feature_id": "1",
+      "feature_name": "Create Daily Time Log Entry",
+      "test_case_count": 21,
+      "type_breakdown": {
+        "positive": 7,
+        "negative": 9,
+        "boundary": 5
+      }
+    },
+    {
+      "timestamp": "2026-05-29T19:57:40.637812",
+      "feature_id": "1",
+      "feature_name": "Create Daily Time Log Entry",
+      "test_case_count": 25,
+      "type_breakdown": {
+        "positive": 9,
+        "negative": 9,
+        "boundary": 7
+      }
+    },
+    {
+      "timestamp": "2026-05-29T22:14:45.239231",
+      "feature_id": "1",
+      "feature_name": "Create Daily Time Log Entry",
+      "test_case_count": 13,
+      "type_breakdown": {
+        "positive": 6,
+        "negative": 7
+      }
+    },
+    {
+      "timestamp": "2026-05-29T22:44:23.538018",
+      "feature_id": "1",
+      "feature_name": "Create Daily Time Log Entry",
+      "test_case_count": 16,
+      "type_breakdown": {
+        "positive": 7,
+        "negative": 8,
+        "boundary": 1
+      }
+    },
+    {
+      "timestamp": "2026-05-29T23:21:54.169279",
+      "feature_id": "1",
+      "feature_name": "Create Daily Time Log Entry",
+      "test_case_count": 16,
+      "type_breakdown": {
+        "positive": 7,
+        "negative": 8,
+        "boundary": 1
+      }
+    },
+    {
+      "timestamp": "2026-05-29T23:58:28.533332",
+      "feature_id": "1",
+      "feature_name": "Create Daily Time Log Entry",
+      "test_case_count": 17,
+      "type_breakdown": {
+        "positive": 8,
+        "negative": 8,
+        "boundary": 1
+      }
+    },
+    {
+      "timestamp": "2026-05-30T00:46:36.254163",
+      "feature_id": "1",
+      "feature_name": "Create Daily Time Log Entry",
+      "test_case_count": 18,
+      "type_breakdown": {
+        "positive": 9,
+        "negative": 8,
+        "boundary": 1
+      }
+    },
+    {
+      "timestamp": "2026-05-30T02:08:19.491095",
+      "feature_id": "1",
+      "feature_name": "Create Daily Time Log Entry",
+      "test_case_count": 4,
+      "type_breakdown": {
+        "positive": 3,
+        "negative": 1
+      }
+    },
+    {
+      "timestamp": "2026-05-30T19:42:17.573251",
+      "feature_id": "1",
+      "feature_name": "Create Daily Time Log Entry",
+      "test_case_count": 13,
+      "type_breakdown": {
+        "positive": 4,
+        "negative": 6,
+        "boundary": 3
+      }
+    },
+    {
+      "timestamp": "2026-05-30T20:43:03.738483",
+      "feature_id": "1",
+      "feature_name": "Create Daily Time Log Entry",
+      "test_case_count": 18,
+      "type_breakdown": {
+        "positive": 5,
+        "negative": 10,
+        "boundary": 3
+      }
+    },
+    {
+      "timestamp": "2026-06-01T13:19:03.121425",
+      "feature_id": "1",
+      "feature_name": "Create Daily Time Log Entry",
+      "test_case_count": 18,
+      "type_breakdown": {
+        "positive": 5,
+        "negative": 10,
+        "boundary": 3
+      }
+    },
+    {
+      "timestamp": "2026-06-01T13:41:02.273189",
+      "feature_id": "1",
+      "feature_name": "Create Daily Time Log Entry",
+      "test_case_count": 22,
+      "type_breakdown": {
+        "positive": 7,
+        "negative": 11,
+        "boundary": 4
+      }
+    },
+    {
+      "timestamp": "2026-06-01T14:13:05.700759",
+      "feature_id": "1",
+      "feature_name": "Create Daily Time Log Entry",
+      "test_case_count": 22,
+      "type_breakdown": {
+        "positive": 7,
+        "negative": 11,
+        "boundary": 4
+      }
+    },
+    {
+      "timestamp": "2026-06-01T15:01:51.020753",
+      "feature_id": "1",
+      "feature_name": "Create Daily Time Log Entry",
+      "test_case_count": 25,
+      "type_breakdown": {
+        "positive": 7,
+        "negative": 14,
+        "boundary": 4
+      }
+    },
+    {
+      "timestamp": "2026-06-01T21:30:38.280905",
+      "feature_id": "1",
+      "feature_name": "Create Daily Time Log Entry",
+      "test_case_count": 15,
+      "type_breakdown": {
+        "positive": 6,
+        "negative": 5,
+        "boundary": 4
+      }
+    },
+    {
+      "timestamp": "2026-06-01T21:54:59.472951",
+      "feature_id": "1",
+      "feature_name": "Create Daily Time Log Entry",
+      "test_case_count": 29,
+      "type_breakdown": {
+        "positive": 11,
+        "negative": 9,
+        "boundary": 9
+      }
+    },
+    {
+      "timestamp": "2026-06-01T22:16:16.513103",
+      "feature_id": "1",
+      "feature_name": "Create Daily Time Log Entry",
+      "test_case_count": 26,
+      "type_breakdown": {
+        "positive": 9,
+        "negative": 10,
+        "boundary": 7
+      }
+    },
+    {
+      "timestamp": "2026-06-01T22:53:03.726684",
+      "feature_id": "1",
+      "feature_name": "Create Daily Time Log Entry",
+      "test_case_count": 15,
+      "type_breakdown": {
+        "positive": 8,
+        "negative": 5,
+        "boundary": 2
+      }
+    },
+    {
+      "timestamp": "2026-06-01T23:10:08.703922",
+      "feature_id": "1",
+      "feature_name": "Create Daily Time Log Entry",
+      "test_case_count": 24,
+      "type_breakdown": {
+        "positive": 11,
+        "negative": 10,
+        "boundary": 3
+      }
+    },
+    {
+      "timestamp": "2026-06-02T11:14:28.193967",
+      "feature_id": "1",
+      "feature_name": "Create Daily Time Log Entry",
+      "test_case_count": 29,
+      "type_breakdown": {
+        "positive": 13,
+        "negative": 12,
+        "boundary": 4
+      }
+    },
+    {
+      "timestamp": "2026-06-02T13:53:42.183684",
+      "feature_id": "1",
+      "feature_name": "Create Daily Time Log Entry",
+      "test_case_count": 37,
+      "type_breakdown": {
+        "positive": 14,
+        "negative": 19,
+        "boundary": 4
+      }
+    },
+    {
+      "timestamp": "2026-06-04T14:26:47.659613",
+      "feature_id": "1",
+      "feature_name": "Create Daily Time Log Entry",
+      "test_case_count": 6,
+      "type_breakdown": {
+        "positive": 4,
+        "negative": 2
+      }
+    },
+    {
+      "timestamp": "2026-06-04T14:39:37.982141",
+      "feature_id": "1",
+      "feature_name": "Create Daily Time Log Entry",
+      "test_case_count": 8,
+      "type_breakdown": {
+        "positive": 4,
+        "negative": 4
+      }
+    },
+    {
+      "timestamp": "2026-06-04T14:49:33.560211",
+      "feature_id": "1",
+      "feature_name": "Create Daily Time Log Entry",
+      "test_case_count": 10,
+      "type_breakdown": {
+        "positive": 5,
+        "negative": 5
+      }
+    },
+    {
+      "timestamp": "2026-06-04T18:52:56.287394",
+      "feature_id": "1",
+      "feature_name": "Create Daily Time Log Entry",
+      "test_case_count": 7,
+      "type_breakdown": {
+        "positive": 3,
+        "negative": 4
+      }
+    },
+    {
+      "timestamp": "2026-06-04T19:49:33.365978",
+      "feature_id": "1",
+      "feature_name": "Create Daily Time Log Entry",
+      "test_case_count": 10,
+      "type_breakdown": {
+        "positive": 4,
+        "negative": 6
+      }
+    },
+    {
+      "timestamp": "2026-06-04T20:43:09.618640",
+      "feature_id": "1",
+      "feature_name": "Create Daily Time Log Entry",
+      "test_case_count": 5,
+      "type_breakdown": {
+        "positive": 3,
+        "negative": 2
+      }
+    },
+    {
+      "timestamp": "2026-06-04T20:56:41.121187",
+      "feature_id": "1",
+      "feature_name": "Create Daily Time Log Entry",
+      "test_case_count": 9,
+      "type_breakdown": {
+        "positive": 4,
+        "negative": 5
+      }
+    },
+    {
+      "timestamp": "2026-06-04T21:08:58.234904",
+      "feature_id": "1",
+      "feature_name": "Create Daily Time Log Entry",
+      "test_case_count": 9,
+      "type_breakdown": {
+        "positive": 4,
+        "negative": 5
+      }
+    },
+    {
+      "timestamp": "2026-06-04T21:15:52.814914",
+      "feature_id": "1",
+      "feature_name": "Create Daily Time Log Entry",
+      "test_case_count": 9,
+      "type_breakdown": {
+        "positive": 4,
+        "negative": 5
+      }
+    },
+    {
+      "timestamp": "2026-06-04T21:21:57.580626",
+      "feature_id": "1",
+      "feature_name": "Create Daily Time Log Entry",
+      "test_case_count": 9,
+      "type_breakdown": {
+        "positive": 4,
+        "negative": 5
+      }
+    },
+    {
+      "timestamp": "2026-06-04T21:52:54.251664",
+      "feature_id": "1",
+      "feature_name": "Create Daily Time Log Entry",
+      "test_case_count": 8,
+      "type_breakdown": {
+        "positive": 6,
+        "negative": 2
+      }
+    }
+  ]
+}

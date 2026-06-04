@@ -1,85 +1,36 @@
-# # from ppai_test_umbrella.modules.requirement_intelligence.loader import load_requirement_text
-# # from ppai_test_umbrella.modules.requirement_intelligence.requirement_processor import RequirementProcessor
-
-# # file_path = "reqs/sample.txt"  # change to any file
-# # raw_text = load_requirement_text(file_path=file_path)
-
-# # processor = RequirementProcessor(chunk_size=2500, chunk_overlap=200)
-# # doc = processor.process(raw_text, title="Sample Requirement")
-
-# # print(doc.to_dict())
-# # print("----- DOCUMENT CHUNKS -----")
-# # print(processor.build_llm_ready_text(doc))
-# # print()
-# # print(processor.build_scenario_generation_prompt(doc))
-
-# # # text = load_requirement_text(file_path)
-
-# # # print("----- LOADED TEXT -----")
-# # # print(text[:1000])  # preview
-
-
-# from ppai_test_umbrella.modules.requirement_intelligence.loader import load_requirement_text
-# from ppai_test_umbrella.modules.requirement_intelligence.requirement_processor import RequirementKnowledgeProcessor
-
-# file_path = "reqs/AmarHishab_Release_1.pdf"
-
-# raw_text = load_requirement_text(file_path)
-
-# # processor = RequirementKnowledgeProcessor(chunk_size=1200, chunk_overlap=150)
-# # req_index = processor.build_index(raw_text, title="Sample SRS")
-
-# # prompt = "count possible test scenarios for feature 6, and write me 10 test cases of that"
-
-# # result = processor.answer_prompt(req_index, prompt)
-
-# # print(result["feature_id"])
-# # print(result["feature_name"])
-# # print(result["possible_test_scenario_count"])
-# # print(result["test_case_generation_prompt"])
-
-# processor = RequirementKnowledgeProcessor(
-#     chunk_size=1200,
-#     chunk_overlap=150,
-#     min_feature_word_count=40,
-# )
-
-# req_index = processor.build_index(raw_text, title="My SRS")
-
-# prompt = "count possible test scenarios for feature 6, and write me 10 test cases of that"
-# result = processor.answer_prompt(req_index, prompt)
-
-# print(result["feature_id"])
-# print(result["feature_name"])
-# print(result["possible_test_scenario_count"])
-# print(result["test_case_generation_prompt"])
-
-
 from ppai_test_umbrella.modules.requirement_intelligence.loader import load_requirement_text
 from ppai_test_umbrella.modules.requirement_intelligence.requirement_processor import RequirementKnowledgeProcessor
 from ppai_test_umbrella.modules.requirement_intelligence.scenario_generator import OllamaScenarioGenerator
 from ppai_test_umbrella.modules.requirement_intelligence.exporter import (
     export_test_cases_json,
-    export_test_cases_pdf,
-    export_test_cases_txt,
+    export_test_cases_excel,
 )
+from ppai_test_umbrella.modules.requirement_intelligence.memory_manager import GenerationMemoryManager
+from ppai_test_umbrella.modules.requirement_intelligence.prompt_builder import SYSTEM_PROMPT
 from utils.timers import Timer
 import argparse
+import json
 import re
+from pathlib import Path
+import sys
+
+if hasattr(sys.stdout, "reconfigure"):
+    try:
+        sys.stdout.reconfigure(encoding="utf-8")
+    except Exception:
+        pass
+if hasattr(sys.stderr, "reconfigure"):
+    try:
+        sys.stderr.reconfigure(encoding="utf-8")
+    except Exception:
+        pass
 
 
 GENERATION_SCOPE = "all"  # use "feature" for one feature, or "all" for full SRS
 FEATURE_ID = "7"  # used only when GENERATION_SCOPE = "feature"
-# USER_PROMPT = "count possible test scenarios for all features, and write me all test cases for each feature"  # optional natural-language prompt to override scope and requested test case count
-USER_PROMPT = """Act as a SQA engineer. Count possible test scenarios for feature 1 from the provided user story, user journey, actors, scope, pre-conditions, assumptions, impacted areas, requirements, acceptance criteria and execptions write testcases and expected results. Follow exactly the structure :
-* Write positive, negative, and boundary cases
-* Start sentences with a mixture of Verify that / Ensure that / Check that / Validate that / other variations
-* Write expected results for the testcases only. Write sentence using “should” statements"""
+USER_PROMPT = SYSTEM_PROMPT
 
-FILE_PATH = "reqs/Section_IV.docx"
-# Examples:
-# USER_PROMPT = "count possible test scenarios for feature 7, and write me all test cases of that"
-# USER_PROMPT = "count possible test scenarios for all features, and write me all test cases for each feature"
+FILE_PATH = "reqs/Section_IV 1.docx"
 
 
 def _safe_file_part(value: str) -> str:
@@ -92,33 +43,13 @@ def _is_toc_like_heading(feature) -> bool:
     return bool(re.search(r"\.{3,}\s*\d+\s*$", first_line))
 
 
-def _looks_like_feature_heading(feature) -> bool:
-    first_line = feature.raw_text.splitlines()[0] if feature.raw_text else ""
-    heading_text = f"{feature.feature_name} {first_line}".lower()
-    return "feature" in heading_text
-
 
 def _select_top_level_features(features):
     selected = []
-    last_feature_number = 0
-
     for feature in features:
         if _is_toc_like_heading(feature):
             continue
-
-        try:
-            feature_number = int(str(feature.feature_id).strip())
-        except ValueError:
-            selected.append(feature)
-            continue
-
-        is_next_feature = feature_number == last_feature_number + 1
-        if not _looks_like_feature_heading(feature) and not is_next_feature:
-            continue
-
         selected.append(feature)
-        last_feature_number = feature_number
-
     return selected
 
 
@@ -149,7 +80,7 @@ def _parse_args():
     parser.add_argument(
         "--prompt",
         default=USER_PROMPT,
-        help="Optional natural-language prompt. A prompt mentioning all features switches to full-SRS mode.",
+        help="Optional natural-language prompt.",
     )
     parser.add_argument(
         "--file",
@@ -191,26 +122,79 @@ def _select_features_for_request(
     raise ValueError('GENERATION_SCOPE must be either "feature" or "all"')
 
 
-def _build_generation_request(processor, feature, prompt=None):
-    possible_count = processor.estimate_possible_test_scenarios(feature)
-    requested_count = possible_count
-
-    if prompt and not _prompt_requests_full_srs(prompt):
-        intent = processor.parse_prompt(prompt)
-        requested_count = intent.requested_test_case_count or possible_count
-
+def _build_generation_request(processor, feature, prompt=None, srs_context=None):
     return {
         "feature_id": feature.feature_id,
         "feature_name": feature.feature_name,
-        "possible_test_scenario_count": possible_count,
-        "requested_test_case_count": requested_count,
         "test_case_generation_prompt": processor.build_test_case_generation_prompt(
             feature=feature,
-            requested_count=requested_count,
-            possible_scenario_count=possible_count,
+            user_instruction=prompt,
+            srs_context=srs_context,
         ),
     }
 
+
+def _versioned_path(raw_path: str) -> str:
+    """Return a versioned file path: file.json -> file.json, file_v2.json, file_v3.json, ..."""
+    p = Path(raw_path)
+    if not p.exists():
+        return str(p)
+    stem, suffix = p.stem, p.suffix
+    version = 2
+    while True:
+        candidate = p.parent / f"{stem}_v{version}{suffix}"
+        if not candidate.exists():
+            return str(candidate)
+        version += 1
+
+
+def _find_latest_version(raw_path: str):
+    """Find the latest versioned file: file.json, file_v2.json, file_v3.json, ...
+    Returns the Path to the latest version, or None if no file exists."""
+    p = Path(raw_path)
+
+    # If the parent directory doesn't exist yet, no previous output exists
+    if not p.parent.exists():
+        return None
+
+    # Collect all versions
+    candidates = []
+    if p.exists():
+        candidates.append((1, p))
+    for f in p.parent.glob(f"{p.stem}_v*{p.suffix}"):
+        match = re.search(r"_v(\d+)$", f.stem)
+        if match:
+            candidates.append((int(match.group(1)), f))
+
+    if not candidates:
+        return None
+
+    # Return the one with the highest version number
+    candidates.sort(key=lambda x: x[0], reverse=True)
+    return candidates[0][1]
+
+
+def _load_existing_test_cases(raw_path: str):
+    """Load existing test cases from the latest versioned JSON output.
+    Returns (test_cases_list, path_loaded_from)."""
+    latest = _find_latest_version(raw_path)
+    if latest is None:
+        return [], None
+    try:
+        with open(latest, "r", encoding="utf-8") as f:
+            data = json.load(f)
+        if isinstance(data, dict):
+            tcs = data.get("test_cases", [])
+            if isinstance(tcs, list):
+                return tcs, str(latest)
+    except Exception as e:
+        print(f"  Warning: Could not load previous results from {latest}: {e}")
+    return [], None
+
+
+# ======================================================================
+# Main execution
+# ======================================================================
 
 args = _parse_args()
 timer = Timer()
@@ -228,7 +212,7 @@ processor = RequirementKnowledgeProcessor(
     min_feature_word_count=40,
 )
 req_index = processor.build_index(raw_text, title="Sample SRS")
-features_to_generate, selected_scope = _select_features_for_request(
+features_to_generate, _ = _select_features_for_request(
     processor,
     req_index,
     prompt=args.prompt,
@@ -236,90 +220,134 @@ features_to_generate, selected_scope = _select_features_for_request(
     feature_id=args.feature_id,
 )
 
-# 3. Send one focused prompt per feature to Ollama
+# 3. Send one focused prompt per feature to Ollama (cumulative iterative mode)
 generator = OllamaScenarioGenerator(
-    ollama_url="http://localhost:11434/api/generate",
-    timeout=1200,
-    temperature=0.2,
-    batch_size=5,
+    ollama_url="http://localhost:11434/api/chat",
 )
 
-all_feature_outputs = []
-generation_errors = []
+memory_manager = GenerationMemoryManager()
+
+total_new_tc_count = 0
+features_with_no_new = 0
 
 print(
     f"Detected {len(req_index.features)} candidate feature section(s); "
-    f"generating test cases for {len(features_to_generate)} feature(s) "
-    f"in {selected_scope} mode."
+    f"generating test cases for {len(features_to_generate)} feature(s)."
 )
 
 for feature in features_to_generate:
-    print(f"Generating feature {feature.feature_id}: {feature.feature_name}")
-    result = _build_generation_request(processor, feature, prompt=args.prompt)
+    print(f"\n{'='*60}")
+    print(f"Feature {feature.feature_id}: {feature.feature_name}")
+    print(f"{'='*60}")
 
-    try:
-        final_output = generator.generate_from_prompt(
-            result["test_case_generation_prompt"],
-            expected_count=result["requested_test_case_count"],
-        )
-    except Exception as exc:
-        generation_errors.append(
-            {
-                "feature_id": feature.feature_id,
-                "feature_name": feature.feature_name,
-                "error": str(exc),
-            }
-        )
-        print(f"Feature {feature.feature_id} failed: {exc}")
-        continue
-
-    all_feature_outputs.append(final_output)
-
+    # Determine the base file name for this feature
     file_name = (
         f"test_cases_feature_{_safe_file_part(feature.feature_id)}_"
         f"{_safe_file_part(feature.feature_name)}"
     )
-    txt_path = export_test_cases_txt(final_output, f"runtime_data/generated/{file_name}.txt")
-    print(f"TXT exported to: {txt_path}")
+    base_json_path = f"runtime_data/generated/{file_name}.json"
 
-    json_path = export_test_cases_json(final_output, f"runtime_data/generated/{file_name}.json")
-    print(f"JSON exported to: {json_path}")
+    # Load existing test cases from the latest versioned file
+    existing_tcs, loaded_from = _load_existing_test_cases(base_json_path)
+    if existing_tcs:
+        print(f"  Loaded {len(existing_tcs)} existing test cases from: {loaded_from}")
+    else:
+        print("  No previous results found. Starting fresh.")
 
-    try:
-        pdf_path = export_test_cases_pdf(final_output, f"runtime_data/generated/{file_name}.pdf")
-        print(f"PDF exported to: {pdf_path}")
-    except ImportError as exc:
-        print(f"PDF export skipped for feature {feature.feature_id}: {exc}")
+    # Construct SRS-wide context
+    other_features = [f for f in req_index.features if str(f.feature_id) != str(feature.feature_id)]
+    srs_context_lines = ["Other features in this SRS (for cross-feature interdependencies):"]
+    for f in other_features:
+        first_line = f.raw_text.splitlines()[0] if f.raw_text else ""
+        srs_context_lines.append(f"- Feature {f.feature_id}: {f.feature_name} (Summary: {first_line[:150]})")
+    srs_context = "\n".join(srs_context_lines)
 
-if selected_scope == "all":
-    combined_output = {
-        "source_file": file_path,
-        "candidate_feature_count": len(req_index.features),
-        "feature_count": len(features_to_generate),
-        "generated_feature_count": len(all_feature_outputs),
-        "total_test_case_count": sum(
-            len(output.get("test_cases", []))
-            for output in all_feature_outputs
-            if isinstance(output, dict)
-        ),
-        "features": all_feature_outputs,
-    }
+    # Inject past run history
+    run_history = memory_manager.get_run_history_context(feature.feature_id)
+    if run_history:
+        srs_context = srs_context + "\n\n" + run_history
 
-    if generation_errors:
-        combined_output["generation_errors"] = generation_errors
-
-    combined_file_name = "test_cases_all_features"
-    txt_path = export_test_cases_txt(combined_output, f"runtime_data/generated/{combined_file_name}.txt")
-    print(f"Combined TXT exported to: {txt_path}")
-
-    json_path = export_test_cases_json(combined_output, f"runtime_data/generated/{combined_file_name}.json")
-    print(f"Combined JSON exported to: {json_path}")
+    result = _build_generation_request(processor, feature, prompt=args.prompt, srs_context=srs_context)
 
     try:
-        pdf_path = export_test_cases_pdf(combined_output, f"runtime_data/generated/{combined_file_name}.pdf")
-        print(f"Combined PDF exported to: {pdf_path}")
-    except ImportError as exc:
-        print(f"Combined PDF export skipped: {exc}")
+        final_output = generator.generate_from_prompt(
+            result["test_case_generation_prompt"],
+            existing_test_cases=existing_tcs,
+        )
+    except Exception as exc:
+        print(f"  Feature {feature.feature_id} failed: {exc}")
+        continue
 
+    # Check convergence
+    new_count = final_output.get("new_test_case_count", 0)
+    total_count = final_output.get("generated_test_case_count", 0)
+    no_new = final_output.get("no_new_test_cases", False)
+
+    if no_new:
+        features_with_no_new += 1
+        print(f"\n  Feature fully covered. Total: {total_count} test cases.")
+    elif new_count == 0:
+        print(f"\n  Generated: {new_count} new test cases (all duplicates). Total: {total_count} test cases.")
+    else:
+        total_new_tc_count += new_count
+        print(f"\n  {new_count} new test cases added. Total: {total_count} test cases.")
+
+    # Ensure feature metadata is set
+    final_output["feature_id"] = str(feature.feature_id)
+    final_output["feature_name"] = feature.feature_name
+
+    clarifications = final_output.pop("clarification_needed", [])
+    if clarifications:
+        print("  Clarifications needed (assumptions):")
+        for c in clarifications:
+            if str(c).strip() and str(c).strip() != "Any missing SRS detail that prevents safe testcase generation":
+                print(f"    - {c}")
+
+    # Persist newly generated titles
+    if isinstance(final_output, dict) and "test_cases" in final_output:
+        new_titles = [tc.get("title", "") for tc in final_output["test_cases"] if isinstance(tc, dict)]
+        memory_manager.add_generated_titles(new_titles)
+
+        # Save run summary
+        tc_types = {}
+        for tc in final_output["test_cases"]:
+            if isinstance(tc, dict):
+                t = tc.get("type", "unknown")
+                tc_types[t] = tc_types.get(t, 0) + 1
+        memory_manager.add_run_summary(
+            feature_id=str(feature.feature_id),
+            feature_name=feature.feature_name,
+            test_case_count=total_count,
+            type_breakdown=tc_types,
+        )
+
+
+    # Save as new versioned files (never overwrite previous output)
+    Path("runtime_data/generated").mkdir(parents=True, exist_ok=True)
+
+    json_path = _versioned_path(base_json_path)
+    export_test_cases_json(final_output, json_path)
+    print(f"\n  JSON saved to: {json_path}")
+
+    base_excel_path = f"runtime_data/generated/{file_name}.xlsx"
+    excel_path = _versioned_path(base_excel_path)
+    export_test_cases_excel(final_output, excel_path)
+    print(f"  Excel saved to: {excel_path}")
+
+
+# Summary
+print(f"\n{'='*60}")
+print("RUN SUMMARY")
+print(f"{'='*60}")
+print(f"  Features processed:       {len(features_to_generate)}")
+print(f"  New TCs added this run:   {total_new_tc_count}")
+print(f"  Fully covered features:   {features_with_no_new} out of {len(features_to_generate)}")
+if features_with_no_new < len(features_to_generate):
+    remaining = len(features_to_generate) - features_with_no_new
+    print(f"  Status:                   {remaining} feature(s) may still have uncovered scenarios.")
+    print("                            Run again to generate more test cases.")
+else:
+    print("  Status:                   All features fully covered!")
+    print("                            No new test cases can be generated.")
 time_elapsed = timer.elapsed()
-print(f"Total time elapsed: {time_elapsed}")
+print(f"  Time elapsed:             {time_elapsed}")

@@ -1,0 +1,638 @@
+{
+  "feature_id": "1",
+  "feature_name": "Create Daily Time Log Entry",
+  "test_cases": [
+    {
+      "test_case_id": "TC-001",
+      "title": "Verify that a user can successfully log time with valid inputs.",
+      "type": "positive",
+      "preconditions": [
+        "User is authenticated",
+        "Project is active",
+        "User is allocated to the project"
+      ],
+      "steps": [
+        "1. Log into the Calculus application.",
+        "2. Navigate to the Timesheet Entry Page.",
+        "3. Select a valid date from the current month.",
+        "4. Select a valid Work Log Category from the portfolio manager.",
+        "5. Select an active Project from Brac/BracIT Jira.",
+        "6. Enter a numeric value greater than zero for Hours.",
+        "7. Enter a valid Work Description.",
+        "8. Save the entry as Draft.",
+        "9. Submit the entry."
+      ],
+      "expected_result": [
+        "The entry should be successfully created and displayed in the Timesheet Management module.",
+        "The system should confirm successful submission."
+      ]
+    },
+    {
+      "test_case_id": "TC-002",
+      "title": "Ensure that invalid or missing inputs block submission.",
+      "type": "negative",
+      "preconditions": [
+        "User is authenticated",
+        "Project is active",
+        "User is allocated to the project"
+      ],
+      "steps": [
+        "1. Log into the Calculus application.",
+        "2. Navigate to the Timesheet Entry Page.",
+        "3. Select a valid date from the current month.",
+        "4. Leave the Hours field blank.",
+        "5. Leave the Work Description field blank.",
+        "6. Save the entry as Draft.",
+        "7. Attempt to submit the entry."
+      ],
+      "expected_result": [
+        "The system should display an error message indicating that Hours and Work Description are mandatory fields.",
+        "The entry should not be saved."
+      ]
+    },
+    {
+      "test_case_id": "TC-003",
+      "title": "Validate that Hours must be numeric and greater than zero.",
+      "type": "boundary",
+      "preconditions": [
+        "User is authenticated",
+        "Project is active",
+        "User is allocated to the project"
+      ],
+      "steps": [
+        "1. Log into the Calculus application.",
+        "2. Navigate to the Timesheet Entry Page.",
+        "3. Select a valid date from the current month.",
+        "4. Select a valid Work Log Category from the portfolio manager.",
+        "5. Select an active Project from Brac/BracIT Jira.",
+        "6. Enter '0' for Hours.",
+        "7. Enter a valid Work Description.",
+        "8. Save the entry as Draft.",
+        "9. Attempt to submit the entry."
+      ],
+      "expected_result": [
+        "The system should display an error message indicating that Hours must be greater than zero.",
+        "The entry should not be saved."
+      ]
+    },
+    {
+      "test_case_id": "TC-004",
+      "title": "Confirm that the system allows submitting completed entries.",
+      "type": "positive",
+      "preconditions": [
+        "User is authenticated",
+        "Project is active",
+        "User is allocated to the project"
+      ],
+      "steps": [
+        "1. Log into the Calculus application.",
+        "2. Navigate to the Timesheet Entry Page.",
+        "3. Select a valid date from the current month.",
+        "4. Select a valid Work Log Category from the portfolio manager.",
+        "5. Select an active Project from Brac/BracIT Jira.",
+        "6. Enter a numeric value greater than zero for Hours.",
+        "7. Enter a valid Work Description.",
+        "8. Save the entry as Draft.",
+        "9. Change the status to 'Completed'.",
+        "10. Submit the entry."
+      ],
+      "expected_result": [
+        "The entry should be successfully marked as completed and displayed in the Timesheet Management module.",
+        "The system should confirm successful completion."
+      ]
+    },
+    {
+      "test_case_id": "TC-005",
+      "title": "Verify that the system does not allow logging without allocation.",
+      "type": "negative",
+      "preconditions": [
+        "User is authenticated",
+        "Project is active",
+        "User is NOT allocated to the project"
+      ],
+      "steps": [
+        "1. Log into the Calculus application.",
+        "2. Navigate to the Timesheet Entry Page.",
+        "3. Select a valid date from the current month.",
+        "4. Select a valid Work Log Category from the portfolio manager.",
+        "5. Select an active Project from Brac/BracIT Jira.",
+        "6. Enter a numeric value greater than zero for Hours.",
+        "7. Enter a valid Work Description.",
+        "8. Save the entry as Draft.",
+        "9. Attempt to submit the entry."
+      ],
+      "expected_result": [
+        "The system should display an error message indicating that the user must be allocated to the project.",
+        "The entry should not be saved."
+      ]
+    },
+    {
+      "test_case_id": "TC-006",
+      "title": "Validate that the list of Work Log Categories is static and taken from the portfolio manager.",
+      "type": "positive",
+      "preconditions": [
+        "User is authenticated",
+        "Project is active",
+        "User is allocated to the project"
+      ],
+      "steps": [
+        "1. Log into the Calculus application.",
+        "2. Navigate to the Timesheet Entry Page.",
+        "3. Select a valid date from the current month.",
+        "4. Verify that the available Work Log Categories match those listed in the portfolio manager.",
+        "5. Select a Work Log Category.",
+        "6. Enter a numeric value greater than zero for Hours.",
+        "7. Enter a valid Work Description.",
+        "8. Save the entry as Draft.",
+        "9. Submit the entry."
+      ],
+      "expected_result": [
+        "The system should display the correct Work Log Categories.",
+        "The entry should be successfully created."
+      ]
+    },
+    {
+      "test_case_id": "TC-007",
+      "title": "Confirm that Project is searchable from both Brac and BracIT Jira and shown list is assigned to the user.",
+      "type": "positive",
+      "preconditions": [
+        "User is authenticated",
+        "Project is active",
+        "User is allocated to the project"
+      ],
+      "steps": [
+        "1. Log into the Calculus application.",
+        "2. Navigate to the Timesheet Entry Page.",
+        "3. Select a valid date from the current month.",
+        "4. Verify that the Project list is populated with projects from Brac and BracIT Jira.",
+        "5. Select a project from the list.",
+        "6. Enter a numeric value greater than zero for Hours.",
+        "7. Enter a valid Work Description.",
+        "8. Save the entry as Draft.",
+        "9. Submit the entry."
+      ],
+      "expected_result": [
+        "The Project list should display projects from both Brac and BracIT Jira.",
+        "The entry should be successfully created."
+      ]
+    },
+    {
+      "test_case_id": "TC-008",
+      "title": "Verify that the date selection allows only dates from the current month.",
+      "type": "boundary",
+      "preconditions": [
+        "User is authenticated",
+        "Project is active",
+        "User is allocated to the project"
+      ],
+      "steps": [
+        "1. Log into the Calculus application.",
+        "2. Navigate to the Timesheet Entry Page.",
+        "3. Attempt to select a date from the previous month.",
+        "4. Attempt to select a date from the next month."
+      ],
+      "expected_result": [
+        "The date picker should only allow selection of dates from the current month.",
+        "The system should display an error message or prevent selection of dates outside the current month."
+      ]
+    },
+    {
+      "test_case_id": "TC-009",
+      "title": "Assert that data fields validation prevents invalid data entry.",
+      "type": "negative",
+      "preconditions": [
+        "User is authenticated",
+        "Project is active",
+        "User is allocated to the project"
+      ],
+      "steps": [
+        "1. Log into the Calculus application.",
+        "2. Navigate to the Timesheet Entry Page.",
+        "3. Select a valid date from the current month.",
+        "4. Enter 'abc' for Hours.",
+        "5. Enter a valid Work Description.",
+        "6. Save the entry as Draft.",
+        "7. Attempt to submit the entry."
+      ],
+      "expected_result": [
+        "The system should display an error message indicating that Hours must be a numeric value.",
+        "The entry should not be saved."
+      ]
+    },
+    {
+      "test_case_id": "TC-010",
+      "title": "Validate that the system handles archived projects correctly.",
+      "type": "negative",
+      "preconditions": [
+        "User is authenticated",
+        "Project is active",
+        "User is allocated to the project"
+      ],
+      "steps": [
+        "1. Log into the Calculus application.",
+        "2. Navigate to the Timesheet Entry Page.",
+        "3. Select a valid date from the current month.",
+        "4. Select an archived Project from the list.",
+        "5. Enter a numeric value greater than zero for Hours.",
+        "6. Enter a valid Work Description.",
+        "7. Save the entry as Draft.",
+        "8. Attempt to submit the entry."
+      ],
+      "expected_result": [
+        "The system should display an error message indicating that the project is archived and cannot be selected.",
+        "The entry should not be saved."
+      ]
+    },
+    {
+      "test_case_id": "TC-011",
+      "title": "Verify that the system allows entry with zero hours.",
+      "type": "boundary",
+      "preconditions": [
+        "User is authenticated",
+        "Project is active",
+        "User is allocated to the project"
+      ],
+      "steps": [
+        "1. Log into the Calculus application.",
+        "2. Navigate to the Timesheet Entry Page.",
+        "3. Select a valid date from the current month.",
+        "4. Select a valid Work Log Category from the portfolio manager.",
+        "5. Select an active Project from Brac/BracIT Jira.",
+        "6. Enter '0' for Hours.",
+        "7. Enter a valid Work Description.",
+        "8. Save the entry as Draft.",
+        "9. Submit the entry."
+      ],
+      "expected_result": [
+        "The entry should be saved with zero hours.",
+        "The entry should be displayed correctly."
+      ]
+    },
+    {
+      "test_case_id": "TC-012",
+      "title": "Confirm that the system correctly handles empty Work Descriptions.",
+      "type": "negative",
+      "preconditions": [
+        "User is authenticated",
+        "Project is active",
+        "User is allocated to the project"
+      ],
+      "steps": [
+        "1. Log into the Calculus application.",
+        "2. Navigate to the Timesheet Entry Page.",
+        "3. Select a valid date from the current month.",
+        "4. Select a valid Work Log Category from the portfolio manager.",
+        "5. Select an active Project from Brac/BracIT Jira.",
+        "6. Enter a numeric value greater than zero for Hours.",
+        "7. Leave the Work Description field blank.",
+        "8. Save the entry as Draft.",
+        "9. Submit the entry."
+      ],
+      "expected_result": [
+        "The system should display an error message indicating that the Work Description is mandatory.",
+        "The entry should not be saved."
+      ]
+    },
+    {
+      "test_case_id": "TC-013",
+      "title": "Validate that the system handles large numeric values for Hours correctly.",
+      "type": "boundary",
+      "preconditions": [
+        "User is authenticated",
+        "Project is active",
+        "User is allocated to the project"
+      ],
+      "steps": [
+        "1. Log into the Calculus application.",
+        "2. Navigate to the Timesheet Entry Page.",
+        "3. Select a valid date from the current month.",
+        "4. Select a valid Work Log Category from the portfolio manager.",
+        "5. Select an active Project from Brac/BracIT Jira.",
+        "6. Enter '999999999' for Hours.",
+        "7. Enter a valid Work Description.",
+        "8. Save the entry as Draft.",
+        "9. Submit the entry."
+      ],
+      "expected_result": [
+        "The system should save the entry with the large numeric value for Hours.",
+        "The entry should be displayed correctly."
+      ]
+    },
+    {
+      "test_case_id": "TC-014",
+      "title": "Verify that the system correctly handles special characters in the Work Description.",
+      "type": "positive",
+      "preconditions": [
+        "User is authenticated",
+        "Project is active",
+        "User is allocated to the project"
+      ],
+      "steps": [
+        "1. Log into the Calculus application.",
+        "2. Navigate to the Timesheet Entry Page.",
+        "3. Select a valid date from the current month.",
+        "4. Select a valid Work Log Category from the portfolio manager.",
+        "5. Select an active Project from Brac/BracIT Jira.",
+        "6. Enter a numeric value greater than zero for Hours.",
+        "7. Enter 'This is a test!' for Work Description.",
+        "8. Save the entry as Draft.",
+        "9. Submit the entry."
+      ],
+      "expected_result": [
+        "The system should save the entry with the Work Description containing special characters.",
+        "The entry should be displayed correctly."
+      ]
+    },
+    {
+      "test_case_id": "TC-015",
+      "title": "Confirm that the system allows saving the entry with valid data.",
+      "type": "positive",
+      "preconditions": [
+        "User is authenticated",
+        "Project is active",
+        "User is allocated to the project"
+      ],
+      "steps": [
+        "1. Log into the Calculus application.",
+        "2. Navigate to the Timesheet Entry Page.",
+        "3. Select a valid date from the current month.",
+        "4. Select a valid Work Log Category from the portfolio manager.",
+        "5. Select an active Project from Brac/BracIT Jira.",
+        "6. Enter a numeric value greater than zero for Hours.",
+        "7. Enter a valid Work Description.",
+        "8. Save the entry as Draft.",
+        "9. Submit the entry."
+      ],
+      "expected_result": [
+        "The system should save the entry with valid data.",
+        "The entry should be displayed correctly."
+      ]
+    },
+    {
+      "test_case_id": "TC-016",
+      "title": "Verify that the system correctly handles zero hours.",
+      "type": "boundary",
+      "preconditions": [
+        "User is authenticated",
+        "Project is active"
+      ],
+      "steps": [
+        "1. Log into the application.",
+        "2. Navigate to the Timesheet Entry Page.",
+        "3. Select today's date.",
+        "4. Select a valid Work Log Category from the portfolio manager.",
+        "5. Select a valid Project from the Brac/BracIT Jira list.",
+        "6. Enter '0' for Hours.",
+        "7. Enter a valid Work Description (e.g., 'Testing').",
+        "8. Save the entry as Draft.",
+        "9. Submit the entry."
+      ],
+      "expected_result": [
+        "The entry should be saved successfully with Hours set to 0.",
+        "The entry should be displayed in the Timesheet Management module."
+      ]
+    },
+    {
+      "test_case_id": "TC-017",
+      "title": "Negative Test - Invalid Project Selection",
+      "type": "negative",
+      "preconditions": [
+        "User is authenticated",
+        "Project is active"
+      ],
+      "steps": [
+        "1. Log into the application.",
+        "2. Navigate to the Timesheet Entry Page.",
+        "3. Select today's date.",
+        "4. Select a valid Work Log Category from the portfolio manager.",
+        "5. Select an invalid Project (e.g., non-existent project).",
+        "6. Enter a valid numeric value for Hours (e.g., 8).",
+        "7. Enter a valid Work Description (e.g., 'Testing').",
+        "8. Attempt to Save the entry.",
+        "9. Attempt to Submit the entry."
+      ],
+      "expected_result": [
+        "An error message should be displayed indicating that the selected project is invalid.",
+        "The entry should not be saved."
+      ]
+    },
+    {
+      "test_case_id": "TC-018",
+      "title": "Boundary Test - Hours at Minimum Value",
+      "type": "boundary",
+      "preconditions": [
+        "User is authenticated",
+        "Project is active"
+      ],
+      "steps": [
+        "1. Log into the application.",
+        "2. Navigate to the Timesheet Entry Page.",
+        "3. Select today's date.",
+        "4. Select a valid Work Log Category from the portfolio manager.",
+        "5. Select a valid Project from the Brac/BracIT Jira list.",
+        "6. Enter '1' for Hours.",
+        "7. Enter a valid Work Description (e.g., 'Testing').",
+        "8. Save the entry as Draft.",
+        "9. Submit the entry."
+      ],
+      "expected_result": [
+        "The entry should be saved successfully with Hours set to 1.",
+        "The entry should be displayed in the Timesheet Management module."
+      ]
+    },
+    {
+      "test_case_id": "TC-019",
+      "title": "Boundary Test - Hours at Maximum Value",
+      "type": "boundary",
+      "preconditions": [
+        "User is authenticated",
+        "Project is active"
+      ],
+      "steps": [
+        "1. Log into the application.",
+        "2. Navigate to the Timesheet Entry Page.",
+        "3. Select today's date.",
+        "4. Select a valid Work Log Category from the portfolio manager.",
+        "5. Select a valid Project from the Brac/BracIT Jira list.",
+        "6. Enter '24' for Hours.",
+        "7. Enter a valid Work Description (e.g., 'Testing').",
+        "8. Save the entry as Draft.",
+        "9. Submit the entry."
+      ],
+      "expected_result": [
+        "The entry should be saved successfully with Hours set to 24.",
+        "The entry should be displayed in the Timesheet Management module."
+      ]
+    },
+    {
+      "test_case_id": "TC-020",
+      "title": "Negative Test - Empty Description with Valid Hours",
+      "type": "negative",
+      "preconditions": [
+        "User is authenticated",
+        "Project is active"
+      ],
+      "steps": [
+        "1. Log into the application.",
+        "2. Navigate to the Timesheet Entry Page.",
+        "3. Select today's date.",
+        "4. Select a valid Work Log Category from the portfolio manager.",
+        "5. Select a valid Project from the Brac/BracIT Jira list.",
+        "6. Enter '8' for Hours.",
+        "7. Leave the Description field blank.",
+        "8. Save the entry as Draft.",
+        "9. Submit the entry."
+      ],
+      "expected_result": [
+        "An error message should be displayed indicating that the Description is mandatory.",
+        "The entry should not be saved."
+      ]
+    },
+    {
+      "test_case_id": "TC-021",
+      "title": "Positive Test - Valid Data Entry",
+      "type": "positive",
+      "preconditions": [
+        "User is authenticated",
+        "Project is active"
+      ],
+      "steps": [
+        "1. Log into the application.",
+        "2. Navigate to the Timesheet Entry Page.",
+        "3. Select today's date.",
+        "4. Select a valid Work Log Category from the portfolio manager.",
+        "5. Select a valid Project from the Brac/BracIT Jira list.",
+        "6. Enter '10' for Hours.",
+        "7. Enter 'Meeting with Client' for Description.",
+        "8. Save the entry as Draft.",
+        "9. Submit the entry."
+      ],
+      "expected_result": [
+        "The entry should be saved successfully.",
+        "The entry should be displayed in the Timesheet Management module."
+      ]
+    },
+    {
+      "test_case_id": "TC-022",
+      "title": "Negative Test - Invalid Data Entry - Non-Numeric Hours",
+      "type": "negative",
+      "preconditions": [
+        "User is authenticated",
+        "Project is active"
+      ],
+      "steps": [
+        "1. Log into the application.",
+        "2. Navigate to the Timesheet Entry Page.",
+        "3. Select today's date.",
+        "4. Select a valid Work Log Category from the portfolio manager.",
+        "5. Select a valid Project from the Brac/BracIT Jira list.",
+        "6. Enter 'abc' for Hours.",
+        "7. Enter 'Meeting with Client' for Description.",
+        "8. Save the entry as Draft.",
+        "9. Submit the entry."
+      ],
+      "expected_result": [
+        "An error message should be displayed indicating that Hours must be a numeric value.",
+        "The entry should not be saved."
+      ]
+    },
+    {
+      "test_case_id": "TC-023",
+      "title": "Positive Test - Saving with Existing Data",
+      "type": "positive",
+      "preconditions": [
+        "User is authenticated",
+        "Project is active"
+      ],
+      "steps": [
+        "1. Log into the application.",
+        "2. Navigate to the Timesheet Entry Page.",
+        "3. Select today's date.",
+        "4. Select a valid Work Log Category from the portfolio manager.",
+        "5. Select a valid Project from the Brac/BracIT Jira list.",
+        "6. Enter '5' for Hours.",
+        "7. Enter 'Daily Tasks' for Description.",
+        "8. Save the entry as Draft.",
+        "9. Submit the entry."
+      ],
+      "expected_result": [
+        "The entry should be saved successfully.",
+        "The entry should be displayed in the Timesheet Management module."
+      ]
+    },
+    {
+      "test_case_id": "TC-024",
+      "title": "Negative Test - Attempting to Save with Empty Fields",
+      "type": "negative",
+      "preconditions": [
+        "User is authenticated",
+        "Project is active"
+      ],
+      "steps": [
+        "1. Log into the application.",
+        "2. Navigate to the Timesheet Entry Page.",
+        "3. Select today's date.",
+        "4. Select a valid Work Log Category from the portfolio manager.",
+        "5. Select a valid Project from the Brac/BracIT Jira list.",
+        "6. Leave Hours and Description fields blank.",
+        "7. Save the entry as Draft.",
+        "8. Submit the entry."
+      ],
+      "expected_result": [
+        "Error messages should be displayed indicating that both Hours and Description fields are mandatory.",
+        "The entry should not be saved."
+      ]
+    },
+    {
+      "test_case_id": "TC-025",
+      "title": "Positive Test - Saving with Valid Data and Date",
+      "type": "positive",
+      "preconditions": [
+        "User is authenticated",
+        "Project is active"
+      ],
+      "steps": [
+        "1. Log into the application.",
+        "2. Navigate to the Timesheet Entry Page.",
+        "3. Select today's date.",
+        "4. Select a valid Work Log Category from the portfolio manager.",
+        "5. Select a valid Project from the Brac/BracIT Jira list.",
+        "6. Enter '12' for Hours.",
+        "7. Enter 'Project Update' for Description.",
+        "8. Save the entry as Draft.",
+        "9. Submit the entry."
+      ],
+      "expected_result": [
+        "The entry should be saved successfully.",
+        "The entry should be displayed in the Timesheet Management module."
+      ]
+    },
+    {
+      "test_case_id": "TC-026",
+      "title": "Negative Test - Attempting to Save with Invalid Date",
+      "type": "negative",
+      "preconditions": [
+        "User is authenticated",
+        "Project is active"
+      ],
+      "steps": [
+        "1. Log into the application.",
+        "2. Navigate to the Timesheet Entry Page.",
+        "3. Select an invalid date (e.g., '2023-13-32').",
+        "4. Select a valid Work Log Category from the portfolio manager.",
+        "5. Select a valid Project from the Brac/BracIT Jira list.",
+        "6. Enter '10' for Hours.",
+        "7. Enter 'Invalid Date' for Description.",
+        "8. Save the entry as Draft.",
+        "9. Submit the entry."
+      ],
+      "expected_result": [
+        "An error message should be displayed indicating that the date is invalid.",
+        "The entry should not be saved."
+      ]
+    }
+  ],
+  "generated_test_case_count": 26,
+  "new_test_case_count": 11,
+  "no_new_test_cases": false
+}
