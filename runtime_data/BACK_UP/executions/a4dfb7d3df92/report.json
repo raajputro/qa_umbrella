@@ -1,0 +1,16 @@
+{
+  "run_id": "a4dfb7d3df92",
+  "source_name": "srs_ah_r1_feature_8_generated.json",
+  "source_path": "runtime_data\\generated\\srs_ah_r1_feature_8_generated.json",
+  "mode": "dry_run",
+  "execution_type": "pytest_file",
+  "generated_test_file": "runtime_data\\generated\\executions\\a4dfb7d3df92\\test_generated_bundle.py",
+  "testcase_count": 3,
+  "executed_file": "runtime_data\\generated\\executions\\a4dfb7d3df92\\test_generated_bundle.py",
+  "exit_code": 0,
+  "status": "passed",
+  "stdout": "...                                                                      [100%]\n3 passed in 0.05s\n",
+  "stderr": "",
+  "stdout_path": "runtime_data\\generated\\executions\\a4dfb7d3df92\\stdout.txt",
+  "stderr_path": "runtime_data\\generated\\executions\\a4dfb7d3df92\\stderr.txt"
+}

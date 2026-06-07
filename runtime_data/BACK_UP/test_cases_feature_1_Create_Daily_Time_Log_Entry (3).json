@@ -1,0 +1,170 @@
+{
+  "feature_id": "1",
+  "feature_name": "Create Daily Time Log Entry",
+  "test_cases": [
+    {
+      "test_case_id": "TC-001",
+      "title": "Verify that a user can successfully log time with valid inputs",
+      "type": "positive",
+      "source_requirement_ids": [
+        "F1_C003"
+      ],
+      "evidence_quote": "User can successfully log time with valid inputs",
+      "assumption_flag": false,
+      "preconditions": [
+        "User must be authenticated",
+        "Project must be active",
+        "User must be allocated or permitted to log time on the project"
+      ],
+      "steps": [
+        "1. Log into the Calculus application",
+        "2. Click 'Add work Log' button from the landing page",
+        "3. Select a valid date, work log category, project, hours greater than zero, and enter a work description of at least 10 characters"
+      ],
+      "expected_result": [
+        "The system should save the entry as Draft or submit it successfully"
+      ]
+    },
+    {
+      "test_case_id": "TC-002",
+      "title": "Verify that invalid or missing inputs block submission",
+      "type": "negative",
+      "source_requirement_ids": [
+        "F1_C003"
+      ],
+      "evidence_quote": "Invalid or missing inputs block submission.",
+      "assumption_flag": false,
+      "preconditions": [
+        "User must be authenticated",
+        "Project must be active",
+        "User must be allocated or permitted to log time on the project"
+      ],
+      "steps": [
+        "1. Log into the Calculus application",
+        "2. Click 'Add work Log' button from the landing page",
+        "3. Leave one or more required fields empty"
+      ],
+      "expected_result": [
+        "The system should display validation messages for each missing or invalid input and block submission"
+      ]
+    },
+    {
+      "test_case_id": "TC-003",
+      "title": "Verify that hours must be numeric and greater than zero",
+      "type": "negative",
+      "source_requirement_ids": [
+        "F1_C003"
+      ],
+      "evidence_quote": "Required; Format: 0h 0m; Must be greater than 0 | \"Time spent is required\" / \"Time must be greater than 0\"",
+      "assumption_flag": false,
+      "preconditions": [
+        "User must be authenticated",
+        "Project must be active",
+        "User must be allocated or permitted to log time on the project"
+      ],
+      "steps": [
+        "1. Log into the Calculus application",
+        "2. Click 'Add work Log' button from the landing page",
+        "3. Enter a non-numeric value in the hours field"
+      ],
+      "expected_result": [
+        "The system should display the message \"Time spent is required\" or \"Time must be greater than 0\" and block submission"
+      ]
+    },
+    {
+      "test_case_id": "TC-004",
+      "title": "Verify that project is searchable from both Brac and BracIT jira and shown list must be assigned to the user",
+      "type": "positive",
+      "source_requirement_ids": [
+        "F1_C003"
+      ],
+      "evidence_quote": "Project will be searchable from both Brac and BracIT jira and shown list must be assigned to the user.",
+      "assumption_flag": false,
+      "preconditions": [
+        "User must be authenticated",
+        "Project must be active",
+        "User must be allocated or permitted to log time on the project"
+      ],
+      "steps": [
+        "1. Log into the Calculus application",
+        "2. Click 'Add work Log' button from the landing page",
+        "3. Search for a project and select it"
+      ],
+      "expected_result": [
+        "The system should display a list of projects assigned to the user and allow selection of a valid project"
+      ]
+    },
+    {
+      "test_case_id": "TC-005",
+      "title": "Verify that the system allows submitting completed entries",
+      "type": "positive",
+      "source_requirement_ids": [
+        "F1_C003"
+      ],
+      "evidence_quote": "The system must allow submitting completed entries.",
+      "assumption_flag": false,
+      "preconditions": [
+        "User must be authenticated",
+        "Project must be active",
+        "User must be allocated or permitted to log time on the project"
+      ],
+      "steps": [
+        "1. Log into the Calculus application",
+        "2. Click 'Add work Log' button from the landing page",
+        "3. Enter valid data and click submit"
+      ],
+      "expected_result": [
+        "The system should save the entry as submitted successfully"
+      ]
+    },
+    {
+      "test_case_id": "TC-006",
+      "title": "Verify that without allocation, the system will not allow to log time",
+      "type": "negative",
+      "source_requirement_ids": [
+        "F1_C003"
+      ],
+      "evidence_quote": "Without allocation the system will not allow to log",
+      "assumption_flag": false,
+      "preconditions": [
+        "User must be authenticated",
+        "Project must be active"
+      ],
+      "steps": [
+        "1. Log into the Calculus application",
+        "2. Click 'Add work Log' button from the landing page",
+        "3. Attempt to enter data without being allocated or permitted to log time on any project"
+      ],
+      "expected_result": [
+        "The system should display an error message indicating that logging is not allowed and block submission"
+      ]
+    },
+    {
+      "test_case_id": "TC-007",
+      "title": "Verify that if a project is archived, it must not be selectable",
+      "type": "negative",
+      "source_requirement_ids": [
+        "F1_C003"
+      ],
+      "evidence_quote": "If project is archived, it must not be selectable",
+      "assumption_flag": false,
+      "preconditions": [
+        "User must be authenticated",
+        "Project must be active",
+        "User must be allocated or permitted to log time on the project"
+      ],
+      "steps": [
+        "1. Log into the Calculus application",
+        "2. Click 'Add work Log' button from the landing page",
+        "3. Attempt to select an archived project"
+      ],
+      "expected_result": [
+        "The system should display an error message indicating that the selected project is archived and block selection"
+      ]
+    }
+  ],
+  "generated_test_case_count": 7,
+  "new_test_case_count": 7,
+  "no_new_test_cases": false,
+  "clarification_needed": []
+}

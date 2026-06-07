@@ -1,0 +1,38 @@
+{
+  "run_id": "29bb33b18164",
+  "source_name": "srs_ah_r1_feature_8_generated.json",
+  "mode": "live",
+  "status": "passed",
+  "summary": {
+    "total": 3,
+    "passed": 0,
+    "failed": 0,
+    "skipped": 3
+  },
+  "results": [
+    {
+      "testcase_id": "TC-001",
+      "title": "Validate happy path for 1601",
+      "automation_type": "playwright_pytest",
+      "status": "skipped",
+      "reason": "No action_steps found; cannot do real execution.",
+      "steps": []
+    },
+    {
+      "testcase_id": "TC-002",
+      "title": "Validate negative and validation rules for 1601",
+      "automation_type": "playwright_pytest",
+      "status": "skipped",
+      "reason": "No action_steps found; cannot do real execution.",
+      "steps": []
+    },
+    {
+      "testcase_id": "TC-003",
+      "title": "Validate boundary and edge behavior for 1601",
+      "automation_type": "playwright_pytest",
+      "status": "skipped",
+      "reason": "No action_steps found; cannot do real execution.",
+      "steps": []
+    }
+  ]
+}

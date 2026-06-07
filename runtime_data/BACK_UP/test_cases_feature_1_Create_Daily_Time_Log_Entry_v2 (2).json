@@ -1,0 +1,211 @@
+{
+  "feature_id": "1",
+  "feature_name": "Create Daily Time Log Entry",
+  "test_cases": [
+    {
+      "test_case_id": "TC-001",
+      "title": "Verify that a user can successfully log time with valid inputs",
+      "type": "positive",
+      "source_requirement_ids": [
+        "F1_C003"
+      ],
+      "evidence_quote": "User can successfully log time with valid inputs",
+      "assumption_flag": false,
+      "preconditions": [
+        "User must be authenticated",
+        "Project must be active",
+        "User must be allocated or permitted to log time on the project"
+      ],
+      "steps": [
+        "1. Log into the Calculus application",
+        "2. Navigate to the role-based home screen",
+        "3. Click 'Add work Log' button from the landing page",
+        "4. Select a valid date, work log category, a project, enter hours greater than zero, and provide a work description",
+        "5. Save the entry as Draft or submit it"
+      ],
+      "expected_result": [
+        "The system should accept the inputs and allow the user to save or submit the time log entry successfully."
+      ]
+    },
+    {
+      "test_case_id": "TC-002",
+      "title": "Ensure that invalid or missing inputs block submission",
+      "type": "negative",
+      "source_requirement_ids": [
+        "F1_C003"
+      ],
+      "evidence_quote": "Invalid or missing inputs block submission.",
+      "assumption_flag": false,
+      "preconditions": [
+        "User must be authenticated",
+        "Project must be active",
+        "User must be allocated or permitted to log time on the project"
+      ],
+      "steps": [
+        "1. Log into the Calculus application",
+        "2. Navigate to the role-based home screen",
+        "3. Click 'Add work Log' button from the landing page",
+        "4. Leave one or more required fields empty or enter invalid data (e.g., negative hours, future date)",
+        "5. Attempt to save or submit the entry"
+      ],
+      "expected_result": [
+        "The system should prevent submission and display an error message for each invalid or missing input."
+      ]
+    },
+    {
+      "test_case_id": "TC-003",
+      "title": "Validate that the date picker is required and must be a valid date",
+      "type": "positive",
+      "source_requirement_ids": [
+        "F1_C003"
+      ],
+      "evidence_quote": "Date | Date Picker | Required; Must be a valid date; Cannot be a future date | \"Date is required\" / \"Please enter a valid date\"",
+      "assumption_flag": false,
+      "preconditions": [
+        "User must be authenticated",
+        "Project must be active",
+        "User must be allocated or permitted to log time on the project"
+      ],
+      "steps": [
+        "1. Log into the Calculus application",
+        "2. Navigate to the role-based home screen",
+        "3. Click 'Add work Log' button from the landing page",
+        "4. Leave the date field empty and attempt to save or submit the entry"
+      ],
+      "expected_result": [
+        "The system should display an error message indicating that the date is required."
+      ]
+    },
+    {
+      "test_case_id": "TC-004",
+      "title": "Validate that work description field must be available",
+      "type": "positive",
+      "source_requirement_ids": [
+        "F1_C003"
+      ],
+      "evidence_quote": "Work Description | Text Area (String) | Required; Min 10 chars; Max 500 chars | \"Description is required\" / \"Minimum 10 characters required\"",
+      "assumption_flag": false,
+      "preconditions": [
+        "User must be authenticated",
+        "Project must be active",
+        "User must be allocated or permitted to log time on the project"
+      ],
+      "steps": [
+        "1. Log into the Calculus application",
+        "2. Navigate to the role-based home screen",
+        "3. Click 'Add work Log' button from the landing page",
+        "4. Leave the work description field empty and attempt to save or submit the entry"
+      ],
+      "expected_result": [
+        "The system should display an error message indicating that the description is required."
+      ]
+    },
+    {
+      "test_case_id": "TC-005",
+      "title": "Ensure that projects dropdown is required and must select one project from the list",
+      "type": "positive",
+      "source_requirement_ids": [
+        "F1_C003"
+      ],
+      "evidence_quote": "Projects | Dropdown (Enum) | Required; Must select one project from the list (Project category same as project creation process) | \"Please select a project\"",
+      "assumption_flag": false,
+      "preconditions": [
+        "User must be authenticated",
+        "Project must be active",
+        "User must be allocated or permitted to log time on the project"
+      ],
+      "steps": [
+        "1. Log into the Calculus application",
+        "2. Navigate to the role-based home screen",
+        "3. Click 'Add work Log' button from the landing page",
+        "4. Leave the projects dropdown empty and attempt to save or submit the entry"
+      ],
+      "expected_result": [
+        "The system should display an error message indicating that a project must be selected."
+      ]
+    },
+    {
+      "test_case_id": "TC-006",
+      "title": "Ensure that archived projects cannot be selectable",
+      "type": "negative",
+      "source_requirement_ids": [
+        "F1_C003"
+      ],
+      "evidence_quote": "Exceptions\nIf project is archived, it must not be selectable",
+      "assumption_flag": false,
+      "preconditions": [
+        "User must be authenticated",
+        "Project must be active",
+        "User must be allocated or permitted to log time on the project"
+      ],
+      "steps": [
+        "1. Log into the Calculus application",
+        "2. Navigate to the role-based home screen",
+        "3. Click 'Add work Log' button from the landing page",
+        "4. Attempt to select an archived project"
+      ],
+      "expected_result": [
+        "The system should display an error message indicating that the selected project is archived and cannot be selected."
+      ]
+    },
+    {
+      "test_case_id": "TC-007",
+      "title": "Ensure that hours must be numeric and greater than zero",
+      "type": "negative",
+      "source_requirement_ids": [
+        "F1_C003"
+      ],
+      "evidence_quote": "Hours must be numeric and greater than zero",
+      "assumption_flag": false,
+      "preconditions": [
+        "User is authenticated",
+        "Project is active",
+        "User is allocated or permitted to log time on the project"
+      ],
+      "steps": [
+        "1. Log into the Calculus application",
+        "2. Navigate to the role-based home screen and click 'Add work Log'",
+        "3. Select a date in the past month",
+        "4. Choose a valid work log category from the dropdown",
+        "5. Select a project from the list",
+        "6. Enter non-numeric characters or zero for hours",
+        "7. Enter a valid work description"
+      ],
+      "expected_result": [
+        "The system should display an error message: 'Time must be greater than 0'"
+      ]
+    },
+    {
+      "test_case_id": "TC-008",
+      "title": "Validate that the date picker is required and must not select a future date",
+      "type": "negative",
+      "source_requirement_ids": [
+        "F1_C003"
+      ],
+      "evidence_quote": "Required; Must be a valid date; Cannot be a future date",
+      "assumption_flag": false,
+      "preconditions": [
+        "User is authenticated",
+        "Project is active",
+        "User is allocated or permitted to log time on the project"
+      ],
+      "steps": [
+        "1. Log into the Calculus application",
+        "2. Navigate to the role-based home screen and click 'Add work Log'",
+        "3. Select a date in the future month",
+        "4. Choose a valid work log category from the dropdown",
+        "5. Select a project from the list",
+        "6. Enter valid hours (e.g., 1h 0m)",
+        "7. Enter a valid work description"
+      ],
+      "expected_result": [
+        "The system should display an error message: 'Please enter a valid date'"
+      ]
+    }
+  ],
+  "generated_test_case_count": 8,
+  "new_test_case_count": 2,
+  "no_new_test_cases": false,
+  "clarification_needed": [],
+  "rejected_test_cases": []
+}

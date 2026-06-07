@@ -1,21 +1,3 @@
-# import json
-
-
-# class ScenarioGenerator:
-#     def __init__(self, llm_client):
-#         self.llm_client = llm_client
-
-#     def generate_from_prompt(self, prompt: str) -> dict:
-#         raw = self.llm_client.generate(prompt)
-
-#         try:
-#             return json.loads(raw)
-#         except json.JSONDecodeError:
-#             return {
-#                 "raw_output": raw,
-#                 "error": "Model did not return valid JSON."
-#             }
-
 from __future__ import annotations
 
 import json
@@ -26,248 +8,212 @@ from typing import Any, Dict, List, Optional
 import requests
 from dotenv import load_dotenv
 
+from .prompt_builder import SYSTEM_PROMPT, build_continuation_instruction, build_iterative_instruction
+from .quality_gate import filter_and_deduplicate, testcase_signature, similarity
+
 load_dotenv()
 
 
 class OllamaScenarioGenerator:
+    """
+    Evidence-first Ollama testcase generator.
+
+    Important behavior:
+    - No forced minimum testcase count.
+    - Deterministic generation options for local models.
+    - Every testcase must pass the quality gate.
+    - Duplicate checks use behavior signatures, not title-only matching.
+    """
+
+    MAX_CONTINUATION_ATTEMPTS = 2
+
     def __init__(
         self,
         model: Optional[str] = None,
-        ollama_url: str = "http://localhost:11434/api/generate",
+        ollama_url: str = "http://localhost:11434/api/chat",
         timeout: Optional[int] = None,
-        temperature: float = 0.2,
-        num_predict: Optional[int] = None,
-        batch_size: int = 10,
+        temperature: float = 0.0,
         force_json: bool = True,
     ):
         self.model = model or os.getenv("PPAI_LLM_MODEL", "qwen2.5-coder:7b")
         self.ollama_url = ollama_url
-        self.timeout = timeout or int(os.getenv("PPAI_LLM_TIMEOUT", "600"))
-        self.temperature = temperature
-        self.num_predict = num_predict or int(os.getenv("PPAI_LLM_NUM_PREDICT", "4096"))
-        self.batch_size = batch_size
+        self.timeout = timeout or int(os.getenv("PPAI_LLM_TIMEOUT", "1800"))
+        self.temperature = float(os.getenv("PPAI_LLM_TEMPERATURE", str(temperature)))
         self.force_json = force_json
+        self.num_ctx = int(os.getenv("PPAI_LLM_NUM_CTX", "8192"))
+        self.seed = int(os.getenv("PPAI_LLM_SEED", "42"))
 
     def generate_from_prompt(
         self,
         prompt: str,
-        expected_count: Optional[int] = None,
-        batch_size: Optional[int] = None,
+        existing_test_cases: Optional[List[Dict[str, Any]]] = None,
     ) -> Dict[str, Any]:
-        batch_size = batch_size or self.batch_size
+        existing = existing_test_cases or []
+        existing_titles = [
+            tc.get("title", "").strip()
+            for tc in existing
+            if isinstance(tc, dict) and tc.get("title", "").strip()
+        ]
 
-        if expected_count and expected_count > batch_size:
-            return self._generate_batched(prompt, expected_count, batch_size)
+        generation_prompt = self._build_iterative_prompt(prompt, existing_titles) if existing_titles else prompt
+        parsed = self._generate_and_parse(generation_prompt)
 
-        return self._generate_single(prompt)
+        if parsed is None:
+            if existing:
+                return self._build_cumulative_result(existing, [], {}, [])
+            return {"error": "Model did not return valid JSON.", "raw_output": ""}
 
-    def _generate_single(self, prompt: str) -> Dict[str, Any]:
-        raw_output = self._call_ollama(prompt)
-        parsed = self._parse_json_response(raw_output)
+        new_tcs = parsed.get("test_cases", [])
+        if not isinstance(new_tcs, list):
+            new_tcs = []
 
-        if parsed is not None:
-            return parsed
+        # Use the prompt itself as source text because it contains the feature requirement details.
+        valid_new_tcs, rejected = filter_and_deduplicate(
+            new_tcs,
+            source_text=prompt,
+            existing=existing,
+            similarity_threshold=0.75,
+        )
+
+        if rejected:
+            print(f"\n  Quality gate rejected {len(rejected)} unsupported/duplicate testcase(s).")
+            for item in rejected[:5]:
+                bad = item.get("test_case", {})
+                title = bad.get("title", "<missing title>") if isinstance(bad, dict) else str(bad)
+                print(f"    - {title}: {', '.join(item.get('reasons', []))}")
+
+        return self._build_cumulative_result(existing, valid_new_tcs, parsed, rejected)
+
+    def _get_covered_functional_summary(self, titles: List[str]) -> str:
+        keywords = set()
+        for title in titles:
+            for word in re.findall(r"[A-Za-z][A-Za-z0-9_-]{2,}", title.lower()):
+                if word not in {"verify", "ensure", "validate", "that", "with", "from", "should", "user", "system"}:
+                    keywords.add(word)
+        if keywords:
+            return "Functional keywords already covered: " + ", ".join(sorted(keywords)[:80])
+        return ""
+
+    def _build_iterative_prompt(self, original_prompt: str, existing_titles: List[str]) -> str:
+        # Give more than 15 titles; duplicates are worse than a slightly longer prompt.
+        latest_titles = existing_titles[-80:]
+        covered_summary = self._get_covered_functional_summary(existing_titles)
+        return f"{original_prompt}\n{build_iterative_instruction(latest_titles, covered_summary)}"
+
+    def _build_cumulative_result(
+        self,
+        existing: List[Dict[str, Any]],
+        new_tcs: List[Dict[str, Any]],
+        parsed_metadata: Dict[str, Any],
+        rejected: List[Dict[str, Any]],
+    ) -> Dict[str, Any]:
+        cumulative = list(existing) + list(new_tcs)
+
+        for i, tc in enumerate(cumulative, start=1):
+            tc["test_case_id"] = f"TC-{i:03d}"
+
+        existing_sigs = {testcase_signature(tc) for tc in existing if isinstance(tc, dict)}
+        actual_new_count = sum(1 for tc in cumulative if testcase_signature(tc) not in existing_sigs)
 
         return {
-            "error": "Model did not return valid JSON.",
-            "raw_output": raw_output,
+            "feature_id": parsed_metadata.get("feature_id", ""),
+            "feature_name": parsed_metadata.get("feature_name", ""),
+            "test_cases": cumulative,
+            "generated_test_case_count": len(cumulative),
+            "new_test_case_count": actual_new_count,
+            "no_new_test_cases": bool(parsed_metadata.get("no_new_test_cases", False)),
+            "clarification_needed": parsed_metadata.get("clarification_needed", []),
         }
 
-    def _generate_batched(
-        self,
-        prompt: str,
-        expected_count: int,
-        batch_size: int,
-    ) -> Dict[str, Any]:
-        merged: Dict[str, Any] = {
-            "test_cases": [],
-            "requested_test_case_count": expected_count,
-            "generation_batches": [],
-        }
-        partial_errors: List[Dict[str, Any]] = []
-
-        for start in range(1, expected_count + 1, batch_size):
-            end = min(start + batch_size - 1, expected_count)
-            current_count = end - start + 1
-            batch_prompt = self._build_batch_prompt(
-                prompt=prompt,
-                batch_count=current_count,
-                start_index=start,
-                end_index=end,
-                total_count=expected_count,
-            )
-
-            batch_output = self._generate_single(batch_prompt)
-            if "error" in batch_output:
-                partial_errors.append(
-                    {
-                        "start_index": start,
-                        "end_index": end,
-                        "error": batch_output,
-                    }
-                )
-                break
-
-            self._copy_metadata(merged, batch_output)
-            test_cases = batch_output.get("test_cases", [])
-            if not isinstance(test_cases, list):
-                partial_errors.append(
-                    {
-                        "start_index": start,
-                        "end_index": end,
-                        "error": "Batch response did not include a test_cases list.",
-                        "raw_output": batch_output,
-                    }
-                )
-                break
-
-            merged["test_cases"].extend(test_cases)
-            merged["generation_batches"].append(
-                {
-                    "start_index": start,
-                    "end_index": end,
-                    "received_count": len(test_cases),
-                }
-            )
-
-        merged["test_cases"] = self._renumber_test_cases(
-            merged.get("test_cases", []),
-            expected_count,
-        )
-        merged["generated_test_case_count"] = len(merged["test_cases"])
-
-        if partial_errors:
-            merged["generation_errors"] = partial_errors
-
-        if len(merged["test_cases"]) != expected_count:
-            merged["generation_warning"] = (
-                f"Expected {expected_count} test cases, but generated "
-                f"{len(merged['test_cases'])}."
-            )
-
-        return merged
+    def _generate_and_parse(self, prompt: str) -> Optional[Dict[str, Any]]:
+        raw_output = self._call_ollama(prompt)
+        parsed = self._parse_json_response(raw_output)
+        if parsed is None:
+            parsed = self._attempt_continuation(prompt, raw_output)
+        return parsed
 
     def _call_ollama(self, prompt: str) -> str:
-        payload = {
+        if "\n---\n" in prompt:
+            system_msg, user_msg = prompt.split("\n---\n", 1)
+        else:
+            system_msg = SYSTEM_PROMPT
+            user_msg = prompt
+
+        payload: Dict[str, Any] = {
             "model": self.model,
-            "prompt": prompt,
+            "messages": [
+                {"role": "system", "content": system_msg.strip()},
+                {"role": "user", "content": user_msg.strip()},
+            ],
             "stream": False,
             "options": {
                 "temperature": self.temperature,
-                "num_predict": self.num_predict,
+                "top_p": 0.2,
+                "repeat_penalty": 1.1,
+                "num_ctx": self.num_ctx,
+                "seed": self.seed,
             },
         }
         if self.force_json:
             payload["format"] = "json"
 
         try:
-            response = requests.post(
-                self.ollama_url,
-                json=payload,
-                timeout=self.timeout,
-            )
+            response = requests.post(self.ollama_url, json=payload, timeout=self.timeout)
             response.raise_for_status()
         except requests.exceptions.ConnectionError:
             raise RuntimeError(
                 f"Cannot connect to Ollama at {self.ollama_url}\n"
-                f"Steps to fix:\n"
-                f"  1. Run: python start_ollama.py\n"
-                f"  2. Or manually start Ollama: ollama serve\n"
-                f"  3. Ensure model '{self.model}' is installed: ollama pull {self.model}"
+                f"Run: ollama serve\n"
+                f"Then ensure model is installed: ollama pull {self.model}"
             ) from None
         except requests.exceptions.ReadTimeout:
             raise RuntimeError(
-                f"Ollama timed out after {self.timeout} seconds while using model '{self.model}'.\n"
-                f"Steps to fix:\n"
-                f"  1. Restart Ollama\n"
-                f"  2. Try a smaller/faster model in PPAI_LLM_MODEL\n"
-                f"  3. Increase timeout for long test-case generation"
+                f"Ollama timed out after {self.timeout} seconds with model '{self.model}'.\n"
+                f"Suggestion: Reduce scope to one feature or increase PPAI_LLM_TIMEOUT."
             ) from None
         except requests.exceptions.HTTPError as e:
             if e.response is not None and e.response.status_code == 404:
                 raise RuntimeError(
-                    f"Ollama could not find model '{self.model}' at {self.ollama_url}\n"
-                    f"Steps to fix:\n"
-                    f"  1. Ensure Ollama is running: ollama serve\n"
-                    f"  2. Pull the model: ollama pull {self.model}\n"
-                    f"  3. Or set PPAI_LLM_MODEL in .env to an installed model"
+                    f"Ollama could not find model '{self.model}'. Run: ollama pull {self.model}"
                 ) from None
             raise
 
         data = response.json()
-        return data.get("response", "").strip()
+        return data.get("message", {}).get("content", "").strip()
 
-    def _build_batch_prompt(
-        self,
-        prompt: str,
-        batch_count: int,
-        start_index: int,
-        end_index: int,
-        total_count: int,
-    ) -> str:
-        batch_prompt = re.sub(
-            r"Write exactly \d+ strong test cases\..*",
-            f"Write exactly {batch_count} strong test cases for this batch.",
-            prompt,
-        )
-
-        return f"""
-{batch_prompt}
-
-Batch instructions:
-- This is a batched generation request.
-- Generate only test cases {start_index} through {end_index} of {total_count}.
-- Return exactly {batch_count} test cases in this response.
-- Number test_case_id globally as TC-{start_index:03d} through TC-{end_index:03d}.
-- Do not include test cases outside this range.
-- Return only valid JSON. Do not wrap it in markdown.
-""".strip()
-
-    def _copy_metadata(self, target: Dict[str, Any], source: Dict[str, Any]) -> None:
-        for key in [
-            "feature_id",
-            "feature_name",
-            "possible_test_scenario_count",
-        ]:
-            if key in source and key not in target:
-                target[key] = source[key]
-
-    def _renumber_test_cases(
-        self,
-        test_cases: List[Any],
-        expected_count: int,
-    ) -> List[Any]:
-        renumbered = test_cases[:expected_count]
-        for index, test_case in enumerate(renumbered, start=1):
-            if isinstance(test_case, dict):
-                test_case["test_case_id"] = f"TC-{index:03d}"
-        return renumbered
+    def _attempt_continuation(self, original_prompt: str, partial_output: str) -> Optional[Dict[str, Any]]:
+        for attempt in range(self.MAX_CONTINUATION_ATTEMPTS):
+            if not partial_output or not partial_output.strip().startswith("{"):
+                return None
+            continuation_prompt = build_continuation_instruction(partial_output)
+            continuation_output = self._call_ollama(f"{SYSTEM_PROMPT}\n---\n{continuation_prompt}")
+            combined = partial_output.rstrip() + "\n" + continuation_output.lstrip()
+            parsed = self._parse_json_response(combined)
+            if parsed is not None:
+                print(f"  Continuation attempt {attempt + 1} succeeded.")
+                return parsed
+            partial_output = combined
+        return None
 
     def _parse_json_response(self, text: str) -> Optional[Dict[str, Any]]:
         if not text:
             return None
-
-        # 1. direct parse
         try:
             return json.loads(text)
         except json.JSONDecodeError:
             pass
 
-        # 2. extract fenced json block
         fenced_match = re.search(r"```json\s*(\{.*?\})\s*```", text, re.DOTALL | re.IGNORECASE)
         if fenced_match:
-            candidate = fenced_match.group(1).strip()
             try:
-                return json.loads(candidate)
+                return json.loads(fenced_match.group(1).strip())
             except json.JSONDecodeError:
                 pass
 
-        # 3. extract first {...} block
         brace_match = re.search(r"(\{.*\})", text, re.DOTALL)
         if brace_match:
-            candidate = brace_match.group(1).strip()
             try:
-                return json.loads(candidate)
+                return json.loads(brace_match.group(1).strip())
             except json.JSONDecodeError:
                 pass
 
