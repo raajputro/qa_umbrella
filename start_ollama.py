@@ -11,6 +11,17 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
+if hasattr(sys.stdout, "reconfigure"):
+    try:
+        sys.stdout.reconfigure(encoding="utf-8")
+    except Exception:
+        pass
+if hasattr(sys.stderr, "reconfigure"):
+    try:
+        sys.stderr.reconfigure(encoding="utf-8")
+    except Exception:
+        pass
+
 def is_ollama_running(url="http://localhost:11434"):
     """Check if Ollama service is running."""
     try:
@@ -25,10 +36,8 @@ def start_ollama():
     try:
         # Try to start Ollama on Windows
         subprocess.Popen(["ollama", "serve"], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-        print("Ollama startup command sent...")
         
         # Wait for service to be ready
-        print("Waiting for Ollama to start (up to 30 seconds)...")
         for i in range(30):
             time.sleep(1)
             if is_ollama_running():
