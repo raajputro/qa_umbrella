@@ -921,8 +921,8 @@ class RequirementIndex:
 @dataclass
 class PromptIntent:
     action: str
-    feature_id: Optional[str] = None
-    requested_test_case_count: int = 10
+    feature_id: Optional[str] = None    
+    requested_test_case_count: Optional[int] = 100
 
 
 # =========================================================
@@ -1001,7 +1001,7 @@ class RequirementKnowledgeProcessor:
                 "feature_context": feature_context,
                 "test_case_generation_prompt": self.build_test_case_generation_prompt(
                     feature=feature,
-                    requested_count=intent.requested_test_case_count,
+                    requested_count=intent.requested_test_case_count, # type: ignore
                     possible_scenario_count=possible_count,
                 ),
             }
