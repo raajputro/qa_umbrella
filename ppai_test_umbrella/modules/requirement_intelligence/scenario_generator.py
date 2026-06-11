@@ -57,6 +57,7 @@ class OllamaScenarioGenerator:
             "stream": False,
             "options": {
                 "temperature": self.temperature,
+                "num_predict": 512,
             },
         }
 

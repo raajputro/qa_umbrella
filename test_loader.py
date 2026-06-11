@@ -59,7 +59,7 @@ from ppai_test_umbrella.modules.requirement_intelligence.loader import load_requ
 from ppai_test_umbrella.modules.requirement_intelligence.requirement_processor import RequirementKnowledgeProcessor
 from ppai_test_umbrella.modules.requirement_intelligence.scenario_generator import OllamaScenarioGenerator
 
-file_path = "reqs/AmarHishab_Release_1.pdf"
+file_path = "reqs/SRS_AH_R1.pdf"
 user_prompt = "count possible test scenarios for feature 6, and write me 10 test cases of that"
 
 # 1. Load requirement file
@@ -81,8 +81,10 @@ print(processor.debug_feature_selection(req_index, "6"))
 
 # 4. Send prompt to Ollama
 generator = OllamaScenarioGenerator(
-    model="qwen2.5-coder:latest",   # change if needed
-    ollama_url="http://localhost:11434/api/generate",
+    # model="qwen2.5-coder:latest",   # change if needed
+    model="gemma4:31b",   # change if needed
+    # ollama_url="http://localhost:11434/api/generate",
+    ollama_url="http://10.150.150.12:11434/api/generate",
     timeout=180,
     temperature=0.2,
 )

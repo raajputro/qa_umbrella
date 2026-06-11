@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import os
 from pathlib import Path
 import tempfile
 from fastapi import FastAPI, UploadFile, File
@@ -74,7 +75,8 @@ def save_step_fix(payload: dict) -> dict:
 
 
 def run() -> None:
-    uvicorn.run("ppai_test_umbrella.apps.api:app", host="0.0.0.0", port=8000, reload=False)
+    port = int(os.getenv("PPAI_API_PORT", os.getenv("PORT", "8000")))
+    uvicorn.run("ppai_test_umbrella.apps.api:app", host="0.0.0.0", port=port, reload=False)
 
 
 if __name__ == "__main__":
